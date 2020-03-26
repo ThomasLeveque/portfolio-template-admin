@@ -1,9 +1,20 @@
-import React from "react";
+import React from 'react';
 
-import "./app.css";
+import AppRoutes from './app.routes';
+import LoadingComponent from './components/loading/loading.component';
+
+import { useUser } from './user/user.context';
+
+import './app.less';
 
 function App() {
-  return <div className="App"></div>;
+  const { userError, userLoaded } = useUser();
+
+  return (
+    <div className="app">
+      {userError ? <p>{userError}</p> : userLoaded ? <AppRoutes /> : <LoadingComponent />}
+    </div>
+  );
 }
 
 export default App;
