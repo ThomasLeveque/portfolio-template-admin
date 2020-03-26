@@ -1,5 +1,18 @@
+@import '../../assets/vars.less';
+
 .user-auth {
-  h1 {
-    text-align: center;
+  height: calc(100vh - @vertical-global-margin * 2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+
+  > div {
+    max-width: 100%;
+    width: 600px;
+
+    h1 {
+      text-align: center;
+    }
   }
 }

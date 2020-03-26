@@ -1,13 +1,12 @@
 import React from 'react';
-import LayoutComponent from '../components/layout/layout.component';
 import { Typography } from 'antd';
 
 const ProjectPage = () => {
   const { Title } = Typography;
   return (
-    <LayoutComponent pageClassName="project">
+    <div className="project page">
       <Title level={1}>My Project</Title>
-    </LayoutComponent>
+    </div>
   );
 };
 

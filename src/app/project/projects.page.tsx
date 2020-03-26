@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import LayoutComponent from '../components/layout/layout.component';
 import { Typography, Table, Button } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Form, Input } from 'formik-antd';
@@ -11,20 +10,12 @@ import { ProjectInitialState } from './project.initial-state';
 import { ResetButton, SubmitButton } from 'formik-antd';
 import { useNotif } from '../notification/notification.context';
 import projectSchema from './project.schema';
-
-interface IColumns {
-  title: string;
-  dataIndex?: string;
-  key: string;
-  render?: (text: string, record: Project) => any;
-  fixed?: any;
-  width?: number,
-}
+import { formatError } from '../utils/format-error.util';
 
 const ProjectsPage = () => {
   const [projects, setProjects] = useState<Project[]>([]);
-  const [columnsProjects, setColumnsProjects] = useState<IColumns[]>([]);
   const [removeProjectLoading, setRemoveProjectLoading] = useState<boolean>(false);
+  const [projectsLoading, setProjectsLoading] = useState<boolean>(false);
   const { openNotification, openMessage } = useNotif();
   const history = useHistory();
   const { pathname } = useLocation();
@@ -60,20 +51,35 @@ const ProjectsPage = () => {
     const firestoreProjects = snapshot.docs.map((doc: firebase.firestore.DocumentSnapshot) => {
       return new Project(doc);
     });
-    if (snapshot.docs.length > 0) {
-      const firestoreColumnsProjects = Object.keys(snapshot.docs[0].data()).map((doc: string) => ({
-        title: doc?.charAt(0).toUpperCase() + doc?.slice(1),
-        dataIndex: doc,
-        key: doc
-      }));
-      setColumnsProjects([
-        ...firestoreColumnsProjects,
-        {
-          title: 'Action',
-          key: 'action',
-          fixed: 'right',
-          width: 120,
-          render: (text: string, record: Project) => (
+    setProjectsLoading(false);
+    setProjects(firestoreProjects);
+  };
+
+  const handleError = (err: any) => {
+    setProjectsLoading(false);
+    openNotification('Cannot load your projects', formatError(err), 'error');
+    console.error(err);
+  };
+
+  useEffect(() => {
+    setProjectsLoading(true);
+    const unsubscribe = firestore.collection('projects').onSnapshot(handleSnapshot, handleError);
+    return () => unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <div className="projects page">
+      <Title level={1}>Projects</Title>
+      <Table<Project> loading={projectsLoading || removeProjectLoading} dataSource={projects}>
+        <Table.Column<Project> key="name" title="Name" dataIndex="name" />
+        <Table.Column<Project> key="desc" title="Desc" dataIndex="desc" />
+        <Table.Column<Project>
+          key="action"
+          title="Action"
+          dataIndex="action"
+          fixed="right"
+          render={(text: string, record: Project) => (
             <>
               <Button
                 icon={<EditOutlined />}
@@ -83,32 +89,13 @@ const ProjectsPage = () => {
               />
               <Button
                 icon={<DeleteOutlined />}
-                loading={removeProjectLoading}
                 type="danger"
                 onClick={() => removeProject(record.id)}
               />
             </>
-          )
-        }
-      ]);
-    }
-    setProjects(firestoreProjects);
-  };
-
-  useEffect(() => {
-    const unsubscribe = firestore.collection('projects').onSnapshot(handleSnapshot);
-    return () => unsubscribe();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  return (
-    <LayoutComponent pageClassName="projects">
-      {projects.length > 0 && (
-        <>
-          <Title level={1}>Projects</Title>
-          <Table dataSource={projects} columns={columnsProjects} />
-        </>
-      )}
+          )}
+        />
+      </Table>
       <Title level={2}>Add a Project</Title>
       <Formik<ProjectInitialState>
         onSubmit={async (
@@ -124,10 +111,10 @@ const ProjectsPage = () => {
         {() => {
           return (
             <Form>
-              <Form.Item name="name">
+              <Form.Item name="name" required label="Name">
                 <Input name="name" placeholder="Name" />
               </Form.Item>
-              <Form.Item name="desc">
+              <Form.Item name="desc" required label="Desc">
                 <Input name="desc" placeholder="Description" />
               </Form.Item>
               <div className="buttons">
@@ -138,7 +125,7 @@ const ProjectsPage = () => {
           );
         }}
       </Formik>
-    </LayoutComponent>
+    </div>
   );
 };
 

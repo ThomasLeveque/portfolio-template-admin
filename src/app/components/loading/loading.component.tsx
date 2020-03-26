@@ -3,9 +3,9 @@ import { LoadingOutlined } from '@ant-design/icons';
 
 import './loading.styles.less';
 
-const LoadingComponent = () => {
+const LoadingComponent = ({ ...props }) => {
   return (
-    <div className="loading">
+    <div className="loading" {...props}>
       <LoadingOutlined />
     </div>
   );

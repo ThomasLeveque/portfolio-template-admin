@@ -1,13 +1,12 @@
 import React from 'react';
 import { Typography } from 'antd';
-import LayoutComponent from '../components/layout/layout.component';
 
 const CategoryPage = () => {
   const { Title } = Typography;
   return (
-    <LayoutComponent pageClassName="category">
+    <div className="category page">
       <Title level={1}>My Category</Title>
-    </LayoutComponent>
+    </div>
   );
 };
 
