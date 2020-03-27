@@ -5,8 +5,6 @@ import { useUser } from './user/user.context';
 import LoadingComponent from './components/loading/loading.component';
 import LayoutComponent from './components/layout/layout.component';
 
-import { HEADER_HEIGHT } from './utils/constants.util';
-
 const UserAuthPage = lazy(() => import('./user/user-auth.page'));
 const CategoryPage = lazy(() => import('./category/category.page'));
 const CategoriesPage = lazy(() => import('./category/categories.page'));
@@ -21,13 +19,7 @@ const AppRoutes = () => {
   return (
     <LayoutComponent withHeader={!isRootPath}>
       <Switch>
-        <Suspense
-          fallback={
-            <LoadingComponent
-              style={isRootPath ? null : { height: `calc(100vh - ${HEADER_HEIGHT}px)` }}
-            />
-          }
-        >
+        <Suspense fallback={<LoadingComponent withHeader={!isRootPath} />}>
           <Route
             exact
             path="/"

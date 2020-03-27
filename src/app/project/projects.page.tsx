@@ -2,15 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { Typography, Table, Button } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Form, Input } from 'formik-antd';
 import { Project } from './project.model';
 import { firestore } from '../firebase/firebase.service';
-import { Formik, FormikHelpers } from 'formik';
 import { ProjectInitialState } from './project.initial-state';
-import { ResetButton, SubmitButton } from 'formik-antd';
 import { useNotif } from '../notification/notification.context';
-import projectSchema from './project.schema';
 import { formatError } from '../utils/format-error.util';
+import ProjectForm from './project.form';
+import { COLLECTION_NAME } from './project.util';
 
 const ProjectsPage = () => {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -21,9 +19,14 @@ const ProjectsPage = () => {
   const { pathname } = useLocation();
   const { Title } = Typography;
 
-  const addProject = async (values: ProjectInitialState) => {
+  const addProject = async (values: ProjectInitialState): Promise<void> => {
     try {
-      await firestore.collection('projects').add(values);
+      const newProject: Project = {
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        ...values
+      };
+      await firestore.collection(COLLECTION_NAME).add(newProject);
       openMessage('Project added successfully', 'success');
     } catch (err) {
       openNotification(err?.message, err?.code, 'error');
@@ -31,11 +34,11 @@ const ProjectsPage = () => {
     }
   };
 
-  const removeProject = async (projectId: string) => {
+  const removeProject = async (projectId: string): Promise<void> => {
     try {
       setRemoveProjectLoading(true);
       await firestore
-        .collection('projects')
+        .collection(COLLECTION_NAME)
         .doc(projectId)
         .delete();
       setRemoveProjectLoading(false);
@@ -63,17 +66,22 @@ const ProjectsPage = () => {
 
   useEffect(() => {
     setProjectsLoading(true);
-    const unsubscribe = firestore.collection('projects').onSnapshot(handleSnapshot, handleError);
+    const unsubscribe = firestore
+      .collection(COLLECTION_NAME)
+      .orderBy('createdAt', 'desc')
+      .onSnapshot(handleSnapshot, handleError);
     return () => unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div className="projects page">
-      <Title level={1}>Projects</Title>
+      <Title level={1}>My Projects</Title>
       <Table<Project> loading={projectsLoading || removeProjectLoading} dataSource={projects}>
         <Table.Column<Project> key="name" title="Name" dataIndex="name" />
         <Table.Column<Project> key="desc" title="Desc" dataIndex="desc" />
+        <Table.Column<Project> key="createdAt" title="Created about" dataIndex="createdAt" />
+        <Table.Column<Project> key="updatedAt" title="Updated about" dataIndex="updatedAt" />
         <Table.Column<Project>
           key="action"
           title="Action"
@@ -90,41 +98,19 @@ const ProjectsPage = () => {
               <Button
                 icon={<DeleteOutlined />}
                 type="danger"
-                onClick={() => removeProject(record.id)}
+                onClick={() => removeProject(record?.id as string)}
               />
             </>
           )}
         />
       </Table>
       <Title level={2}>Add a Project</Title>
-      <Formik<ProjectInitialState>
-        onSubmit={async (
-          values: ProjectInitialState,
-          { setSubmitting }: FormikHelpers<ProjectInitialState>
-        ) => {
-          await addProject(values);
-          setSubmitting(false);
-        }}
-        validationSchema={projectSchema}
+      <ProjectForm
+        callback={addProject}
         initialValues={{ name: '', desc: '' }}
-      >
-        {() => {
-          return (
-            <Form>
-              <Form.Item name="name" required label="Name">
-                <Input name="name" placeholder="Name" />
-              </Form.Item>
-              <Form.Item name="desc" required label="Desc">
-                <Input name="desc" placeholder="Description" />
-              </Form.Item>
-              <div className="buttons">
-                <ResetButton>Reset</ResetButton>
-                <SubmitButton>Add project</SubmitButton>
-              </div>
-            </Form>
-          );
-        }}
-      </Formik>
+        submitText="Add"
+        resetText="Reset"
+      />
     </div>
   );
 };
