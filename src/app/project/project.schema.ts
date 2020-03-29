@@ -10,7 +10,9 @@ const projectSchema = yup.object().shape({
   desc: yup
     .string()
     .max(max, `Description must be shorter than ${max} characters`)
-    .required('Description required')
+    .required('Description required'),
+  date: yup.string().required('Date required'),
+  skills: yup.array<string>()
 });
 
 export default projectSchema;

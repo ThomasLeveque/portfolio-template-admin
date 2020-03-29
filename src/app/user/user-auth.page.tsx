@@ -39,7 +39,7 @@ const UserAuthPage = () => {
           {() => {
             return (
               <Form>
-                <Form.Item name="email" label="Email">
+                <Form.Item name="email">
                   <Input name="email" placeholder="Email" />
                 </Form.Item>
                 <Form.Item name="password">

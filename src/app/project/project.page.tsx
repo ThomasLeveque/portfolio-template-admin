@@ -56,7 +56,7 @@ const ProjectPage = () => {
       />
       <ProjectForm
         callback={updateProject}
-        initialValues={{ name: project.name, desc: project.desc }}
+        initialValues={{ name: project.name, desc: project.desc, date: project.date, skills: project.skills }}
         submitText="Update"
         resetText="Cancel"
       />

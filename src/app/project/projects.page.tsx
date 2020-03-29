@@ -80,6 +80,7 @@ const ProjectsPage = () => {
       <Table<Project> loading={projectsLoading || removeProjectLoading} dataSource={projects}>
         <Table.Column<Project> key="name" title="Name" dataIndex="name" />
         <Table.Column<Project> key="desc" title="Desc" dataIndex="desc" />
+        <Table.Column<Project> key="date" title="Project date" dataIndex="date" />
         <Table.Column<Project> key="createdAt" title="Created about" dataIndex="createdAt" />
         <Table.Column<Project> key="updatedAt" title="Updated about" dataIndex="updatedAt" />
         <Table.Column<Project>
@@ -107,7 +108,7 @@ const ProjectsPage = () => {
       <Title level={2}>Add a Project</Title>
       <ProjectForm
         callback={addProject}
-        initialValues={{ name: '', desc: '' }}
+        initialValues={{ name: '', desc: '', date: '', skills: [] }}
         submitText="Add"
         resetText="Reset"
       />
