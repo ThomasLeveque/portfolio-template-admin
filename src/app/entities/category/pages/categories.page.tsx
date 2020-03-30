@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Table, Button } from 'antd';
-import { Category } from './category.model';
-import { useNotif } from '../notification/notification.context';
+import { Category } from '../category.model';
+import { useNotif } from '../../../notification/notification.context';
 import { useHistory, useLocation } from 'react-router-dom';
-import { CategoryInitialState } from './category.initial-state';
-import { firestore } from '../firebase/firebase.service';
-import { formatError } from '../utils/format-error.util';
+import { CategoryInitialState } from '../category.initial-state';
+import { firestore } from '../../../firebase/firebase.service';
+import { formatError } from '../../../utils/format-error.util';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import CategoryForm from './category.form';
-import { COLLECTION_NAME } from './category.util';
+import CategoryForm from '../category.form';
+import { COLLECTION_NAME } from '../category.util';
 
 const CategoriesPage = () => {
   const [categories, setCategories] = useState<Category[]>([]);

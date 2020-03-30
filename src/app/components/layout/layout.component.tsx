@@ -19,7 +19,7 @@ const LayoutComponent: React.FC<IProps> = ({ withHeader = true, pageClassName = 
   const { Header, Content } = Layout;
 
   const parsePathname = (): string => {
-    const slitedLocation: string[] = location.pathname.split('/');
+    const slitedLocation: string[] = location.pathname.replace('/entities', '').split('/');
     if (!!slitedLocation[0]) {
       return `/${slitedLocation[0]}`;
     } else {
@@ -35,10 +35,10 @@ const LayoutComponent: React.FC<IProps> = ({ withHeader = true, pageClassName = 
         <Header className="layout-header">
           <Menu theme="dark" mode="horizontal" selectedKeys={[memoPathname]}>
             <Menu.Item key="/projects">
-              <Link to="/projects">Projects</Link>
+              <Link to="/entities/projects">Projects</Link>
             </Menu.Item>
             <Menu.Item key="/categories">
-              <Link to="/categories">Categories</Link>
+              <Link to="/entities/categories">Categories</Link>
             </Menu.Item>
           </Menu>
           <Button

@@ -3,6 +3,7 @@ import { Form, Input, SubmitButton, ResetButton } from 'formik-antd';
 import { Formik, FormikHelpers } from 'formik';
 import { Typography } from 'antd';
 
+import LayoutComponent from '../components/layout/layout.component';
 import userSchema from './user.schema';
 import { UserInitialState } from './user.initial-state';
 import { login } from './user.service';
@@ -15,7 +16,7 @@ const UserAuthPage = () => {
   const { Title } = Typography;
 
   return (
-    <div className="user-auth page">
+    <LayoutComponent pageClassName="user-auth" withHeader={false}>
       <div>
         <Title level={1}>Login</Title>
         <Formik<UserInitialState>
@@ -40,10 +41,10 @@ const UserAuthPage = () => {
             return (
               <Form>
                 <Form.Item name="email">
-                  <Input name="email" placeholder="Email" />
+                  <Input autoComplete="off" name="email" placeholder="Email" />
                 </Form.Item>
                 <Form.Item name="password">
-                  <Input.Password name="password" placeholder="Password" />
+                  <Input.Password autoComplete="off" name="password" placeholder="Password" />
                 </Form.Item>
                 <div className="buttons">
                   <ResetButton>Reset</ResetButton>
@@ -54,7 +55,7 @@ const UserAuthPage = () => {
           }}
         </Formik>
       </div>
-    </div>
+    </LayoutComponent>
   );
 };
 

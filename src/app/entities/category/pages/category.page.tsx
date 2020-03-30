@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, PageHeader, Descriptions } from 'antd';
 import { useHistory, useParams } from 'react-router-dom';
-import { useNotif } from '../notification/notification.context';
-import { Category } from './category.model';
-import { firestore } from '../firebase/firebase.service';
-import { CategoryInitialState } from './category.initial-state';
-import LoadingComponent from '../components/loading/loading.component';
-import { toCapitalize } from '../utils/parse-string.util';
-import CategoryForm from './category.form';
-import { COLLECTION_NAME } from './category.util';
+import { useNotif } from '../../../notification/notification.context';
+import { Category } from '../category.model';
+import { firestore } from '../../../firebase/firebase.service';
+import { CategoryInitialState } from '../category.initial-state';
+import LoadingComponent from '../../../components/loading/loading.component';
+import { toCapitalize } from '../../../utils/parse-string.util';
+import CategoryForm from '../category.form';
+import { COLLECTION_NAME } from '../category.util';
 
 const CategoryPage = () => {
   const [category, setCategory] = useState<Category | null>(null);

@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { Typography, Table, Button } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Project } from './project.model';
-import { firestore } from '../firebase/firebase.service';
-import { ProjectInitialState } from './project.initial-state';
-import { useNotif } from '../notification/notification.context';
-import { formatError } from '../utils/format-error.util';
-import ProjectForm from './project.form';
-import { COLLECTION_NAME } from './project.util';
+import { Project } from '../project.model';
+import { firestore } from '../../../firebase/firebase.service';
+import { ProjectInitialState } from '../project.initial-state';
+import { useNotif } from '../../../notification/notification.context';
+import { formatError } from '../../../utils/format-error.util';
+import ProjectForm from '../project.form';
+import { COLLECTION_NAME } from '../project.util';
 
 const ProjectsPage = () => {
   const [projects, setProjects] = useState<Project[]>([]);

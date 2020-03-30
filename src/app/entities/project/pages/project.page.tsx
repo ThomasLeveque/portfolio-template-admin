@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, PageHeader, Descriptions } from 'antd';
 import { useHistory, useParams } from 'react-router-dom';
-import { firestore } from '../firebase/firebase.service';
-import { Project } from './project.model';
-import { toCapitalize } from '../utils/parse-string.util';
-import LoadingComponent from '../components/loading/loading.component';
-import { ProjectInitialState } from './project.initial-state';
-import { useNotif } from '../notification/notification.context';
-import ProjectForm from './project.form';
-import { COLLECTION_NAME } from './project.util';
+import { firestore } from '../../../firebase/firebase.service';
+import { Project } from '../project.model';
+import { toCapitalize } from '../../../utils/parse-string.util';
+import LoadingComponent from '../../../components/loading/loading.component';
+import { ProjectInitialState } from '../project.initial-state';
+import { useNotif } from '../../../notification/notification.context';
+import ProjectForm from '../project.form';
+import { COLLECTION_NAME } from '../project.util';
 
 const ProjectPage = () => {
   const [project, setProject] = useState<Project | null>(null);
