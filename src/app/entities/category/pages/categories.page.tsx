@@ -30,6 +30,7 @@ const CategoriesPage = () => {
           title="Action"
           dataIndex="action"
           fixed="right"
+          width={120}
           render={(text: string, record: Category) => (
             <>
               <Button

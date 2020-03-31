@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { Typography, Table, Button } from 'antd';
+import { Typography, Table, Button, Tag } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Project } from '../project.model';
 import ProjectForm from '../project.form';
@@ -21,17 +21,85 @@ const ProjectsPage = () => {
   return (
     <div className="projects page">
       <Title level={1}>My Projects</Title>
-      <Table<Project> loading={projectsLoading || removeProjectLoading} dataSource={projects}>
-        <Table.Column<Project> key="name" title="Name" dataIndex="name" />
-        <Table.Column<Project> key="desc" title="Desc" dataIndex="desc" />
-        <Table.Column<Project> key="formatedDate" title="Project date" dataIndex="formatedDate" />
-        <Table.Column<Project> key="createdAt" title="Created about" dataIndex="createdAt" />
-        <Table.Column<Project> key="updatedAt" title="Updated about" dataIndex="updatedAt" />
+      <Table<Project>
+        loading={projectsLoading || removeProjectLoading}
+        dataSource={projects}
+        scroll={{ x: 1300 }}
+      >
+        <Table.Column<Project> key="name" title="Name" dataIndex="name" width={120} />
+        <Table.Column<Project> key="desc" title="Desc" dataIndex="desc" width={120} />
+        <Table.Column<Project>
+          key="formatedDate"
+          title="Project date"
+          dataIndex="formatedDate"
+          width={120}
+        />
+        <Table.Column<Project>
+          key="skills"
+          title="Skills"
+          dataIndex="skills"
+          width={250}
+          render={(skills: string[]) => (
+            <span>
+              {skills.map((skill: string) => {
+                return (
+                  <Tag
+                    style={{ marginTop: '3px', marginBottom: '3px' }}
+                    color="geekblue"
+                    key={skill}
+                  >
+                    {skill.toUpperCase()}
+                  </Tag>
+                );
+              })}
+            </span>
+          )}
+        />
+        <Table.Column<Project>
+          key="categories"
+          title="Categories"
+          dataIndex="categories"
+          width={250}
+          render={(categories: string[]) => (
+            <span>
+              {categories.map((category: string) => {
+                return (
+                  <Tag
+                    style={{ marginTop: '3px', marginBottom: '3px' }}
+                    color="geekblue"
+                    key={category}
+                  >
+                    {category.toUpperCase()}
+                  </Tag>
+                );
+              })}
+            </span>
+          )}
+        />
+        <Table.Column<Project>
+          key="formatedDate"
+          title="Project date"
+          dataIndex="formatedDate"
+          width={120}
+        />
+        <Table.Column<Project>
+          key="createdAt"
+          title="Created about"
+          dataIndex="createdAt"
+          width={120}
+        />
+        <Table.Column<Project>
+          key="updatedAt"
+          title="Updated about"
+          dataIndex="updatedAt"
+          width={120}
+        />
         <Table.Column<Project>
           key="action"
           title="Action"
           dataIndex="action"
           fixed="right"
+          width={120}
           render={(text: string, record: Project) => (
             <>
               <Button
