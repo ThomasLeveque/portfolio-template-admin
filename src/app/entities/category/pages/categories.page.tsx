@@ -21,7 +21,11 @@ const CategoriesPage = () => {
   return (
     <div className="categories page">
       <Title level={1}>My Categories</Title>
-      <Table<Category> loading={categoriesLoading || removeCategoryLoading} dataSource={categories}>
+      <Table<Category>
+        loading={categoriesLoading || removeCategoryLoading}
+        dataSource={categories}
+        scroll={{ x: 1300 }}
+      >
         <Table.Column<Category> key="name" title="Name" dataIndex="name" />
         <Table.Column<Category> key="createdAt" title="Created about" dataIndex="createdAt" />
         <Table.Column<Category> key="updatedAt" title="Updated about" dataIndex="updatedAt" />
