@@ -4,24 +4,35 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 import LayoutComponent from '../components/layout/layout.component';
 import LoadingComponent from '../components/loading/loading.component';
 
+import NotFound from '../components/not-found/not-found.component';
+
 const CategoryPage = lazy(() => import('./category/pages/category.page'));
 const CategoriesPage = lazy(() => import('./category/pages/categories.page'));
 const ProjectPage = lazy(() => import('./project/pages/project.page'));
 const ProjectsPage = lazy(() => import('./project/pages/projects.page'));
 
+export const entitiesRoutesMap = [
+  { path: '/entities/projects', component: ProjectsPage },
+  { path: '/entities/categories', component: CategoriesPage },
+  { path: '/entities/categories/:categoryId', component: CategoryPage },
+  { path: '/entities/projects/:projectId', component: ProjectPage }
+];
+
 const EntitiesRoutes = () => {
   return (
-    <Switch>
-      <Route path="/entities" exact render={() => <Redirect to="/entities/projects" />} />
-      <LayoutComponent withHeader>
-        <Suspense fallback={<LoadingComponent withHeader />}>
-          <Route exact path="/entities/projects" component={ProjectsPage} />
-          <Route exact path="/entities/categories" component={CategoriesPage} />
-          <Route exact path="/entities/categories/:categoryId" component={CategoryPage} />
-          <Route exact path="/entities/projects/:projectId" component={ProjectPage} />
-        </Suspense>
-      </LayoutComponent>
-    </Switch>
+    <LayoutComponent withHeader>
+      <Suspense fallback={<LoadingComponent withHeader />}>
+        <Switch>
+          <Route path="/entities" exact render={() => <Redirect to="/entities/projects" />} />
+          {entitiesRoutesMap.map(({ path, component }: any) => (
+            <Route key={path} exact path={path} component={component} />
+          ))}
+          <Route path="*">
+            <NotFound />
+          </Route>
+        </Switch>
+      </Suspense>
+    </LayoutComponent>
   );
 };
 

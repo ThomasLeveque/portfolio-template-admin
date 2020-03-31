@@ -56,7 +56,13 @@ const ProjectPage = () => {
       />
       <ProjectForm
         callback={updateProject}
-        initialValues={{ name: project.name, desc: project.desc, date: project.date, skills: project.skills }}
+        initialValues={{
+          name: project.name,
+          desc: project.desc,
+          date: project.date,
+          skills: project.skills,
+          categories: project.categories
+        }}
         submitText="Update"
         resetText="Cancel"
       />

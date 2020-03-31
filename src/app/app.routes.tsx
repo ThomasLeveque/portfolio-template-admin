@@ -12,8 +12,8 @@ const AppRoutes = () => {
   const { user } = useUser();
 
   return (
-    <Switch>
-      <Suspense fallback={<LoadingComponent withHeader={false} />}>
+    <Suspense fallback={<LoadingComponent withHeader={false} />}>
+      <Switch>
         <Route
           exact
           path="/"
@@ -23,8 +23,8 @@ const AppRoutes = () => {
         <Route path="*">
           <NotFound />
         </Route>
-      </Suspense>
-    </Switch>
+      </Switch>
+    </Suspense>
   );
 };
 

@@ -2,9 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Formik, FormikHelpers } from 'formik';
 import { ProjectInitialState } from './project.initial-state';
 import projectSchema from './project.schema';
-import { Form, Input, ResetButton, SubmitButton, DatePicker } from 'formik-antd';
+import { Form, Input, ResetButton, SubmitButton, DatePicker, Select } from 'formik-antd';
 import { Input as AntdInput, Tag } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import { useCategory } from '../category/category.context';
+import { Category } from '../category/category.model';
 
 interface IProps {
   callback: (values: ProjectInitialState) => Promise<void>;
@@ -17,6 +19,8 @@ const ProjectForm: React.FC<IProps> = ({ callback, initialValues, submitText, re
   const [skillsInputVisible, setSkillsInputVisible] = useState<boolean>(false);
   const [skillsInputValue, setSkillsInputValue] = useState<string>('');
   const inputRef = useRef<AntdInput>(null);
+  const { categories } = useCategory();
+  const { Option } = Select;
 
   const showSkillsInput = () => {
     setSkillsInputVisible(true);
@@ -104,7 +108,15 @@ const ProjectForm: React.FC<IProps> = ({ callback, initialValues, submitText, re
                 )}
               </>
             </Form.Item>
-
+            <Form.Item name="categories" required label="Categories">
+              <Select mode="multiple" placeholder="Select categories" name="categories">
+                {categories.map((category: Category, index: number) => (
+                  <Option key={`${category.name}${index}`} value={category.name}>
+                    {category.name}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
             <div className="buttons">
               <ResetButton>{resetText}</ResetButton>
               <SubmitButton>{submitText}</SubmitButton>
