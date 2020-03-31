@@ -9,6 +9,7 @@ import LoadingComponent from '../../../components/loading/loading.component';
 import { toCapitalize } from '../../../utils/parse-string.util';
 import CategoryForm from '../category.form';
 import { COLLECTION_NAME } from '../category.util';
+import { Project } from '../../project/project.model';
 
 const CategoryPage = () => {
   const [category, setCategory] = useState<Category | null>(null);
@@ -29,14 +30,30 @@ const CategoryPage = () => {
 
   const updateCategory = async (values: CategoryInitialState): Promise<void> => {
     try {
+      const batch = firestore.batch();
+      const projectsRef: firebase.firestore.CollectionReference = firestore.collection('projects');
+      const categoryRef: firebase.firestore.DocumentReference = firestore
+        .collection(COLLECTION_NAME)
+        .doc(categoryId);
       const updatedCategory: Category = {
         updatedAt: Date.now(),
         ...values
       };
-      await firestore
-        .collection(COLLECTION_NAME)
-        .doc(categoryId)
-        .update(updatedCategory);
+
+      const snapshot: firebase.firestore.QuerySnapshot = await projectsRef
+        .where('categories', 'array-contains', category?.name)
+        .get();
+      // It means the category deleted is not used
+      if (!snapshot.empty) {
+        for (const doc of snapshot.docs) {
+          const projectRef = projectsRef.doc(doc.id);
+          const project = new Project(doc);
+          const newCategories = project.categories.join(',').replace(`${category?.name}`, values.name).split(',');
+          batch.update(projectRef, 'categories', newCategories);
+        }
+      }
+      batch.update(categoryRef, updatedCategory);
+      await batch.commit();
       openMessage('Category updated successfully', 'success');
     } catch (err) {
       openNotification(err?.message, err?.code, 'error');
