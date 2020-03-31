@@ -47,7 +47,7 @@ const LayoutComponent: React.FC<IProps> = ({ withHeader = true, pageClassName = 
               try {
                 setLogoutLoading(true);
                 await logout();
-                setLogoutLoading(false);
+                // Do not setLogoutLoading(false) because route will change
                 openMessage('Your are now logout', 'success');
               } catch (err) {
                 setLogoutLoading(false);
