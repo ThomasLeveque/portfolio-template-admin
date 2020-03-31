@@ -41,7 +41,7 @@ const CategoriesPage = () => {
               <Button
                 icon={<DeleteOutlined />}
                 type="danger"
-                onClick={() => removeCategory(record?.id as string)}
+                onClick={() => removeCategory(record)}
               />
             </>
           )}

@@ -8,7 +8,7 @@ interface ICategoryContext {
   removeCategoryLoading: boolean;
   categoriesLoading: boolean;
   addCategory: (values: CategoryInitialState) => Promise<void>;
-  removeCategory: (categoryId: string) => Promise<void>;
+  removeCategory: (category: Category) => Promise<void>;
 }
 
 export const CategoryContext = createContext<ICategoryContext>({

@@ -6,6 +6,7 @@ import { Category } from './category.model';
 import { formatError } from '../../utils/format-error.util';
 import { CategoryContext } from './category.context';
 import { COLLECTION_NAME } from './category.util';
+import { Project } from '../project/project.model';
 
 const CategoryProvider: React.FC = memo(({ children }) => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -28,13 +29,29 @@ const CategoryProvider: React.FC = memo(({ children }) => {
     }
   };
 
-  const removeCategory = async (categoryId: string): Promise<void> => {
+  const removeCategory = async ({ id, name }: Category): Promise<void> => {
     try {
       setRemoveCategoryLoading(true);
-      await firestore
+      const batch = firestore.batch();
+      const projectsRef: firebase.firestore.CollectionReference = firestore.collection('projects');
+      const categoryRef: firebase.firestore.DocumentReference = firestore
         .collection(COLLECTION_NAME)
-        .doc(categoryId)
-        .delete();
+        .doc(id);
+
+      const snapshot: firebase.firestore.QuerySnapshot = await projectsRef
+        .where('categories', 'array-contains', name)
+        .get();
+      // It means the category deleted is not used
+      if (!snapshot.empty) {
+        for (const doc of snapshot.docs) {
+          const projectRef = projectsRef.doc(doc.id);
+          const project = new Project(doc);
+          const newCategories = project.categories.filter((category: string) => category !== name);
+          batch.update(projectRef, 'categories', newCategories);
+        }
+      }
+      batch.delete(categoryRef);
+      await batch.commit();
       setRemoveCategoryLoading(false);
       openMessage('Category removed successfully', 'success');
     } catch (err) {
