@@ -120,7 +120,14 @@ const ProjectsPage = () => {
       <Title level={2}>Add a Project</Title>
       <ProjectForm
         callback={addProject}
-        initialValues={{ name: '', desc: '', date: '', skills: [], categories: [] }}
+        initialValues={{
+          name: '',
+          desc: '',
+          date: '',
+          skills: [],
+          categories: [],
+          images: []
+        }}
         submitText="Add"
         resetText="Reset"
       />

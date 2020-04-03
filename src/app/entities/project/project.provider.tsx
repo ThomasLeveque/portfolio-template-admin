@@ -17,9 +17,9 @@ const ProjectProvider: React.FC = memo(({ children }) => {
   const addProject = async (values: ProjectInitialState): Promise<void> => {
     try {
       const newProject: Project = {
+        ...values,
         createdAt: Date.now(),
-        updatedAt: Date.now(),
-        ...values
+        updatedAt: Date.now()
       };
       await firestore.collection(COLLECTION_NAME).add(newProject);
       openMessage('Project added successfully', 'success');

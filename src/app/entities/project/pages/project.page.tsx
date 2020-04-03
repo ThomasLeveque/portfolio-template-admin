@@ -61,7 +61,8 @@ const ProjectPage = () => {
           desc: project.desc,
           date: project.date,
           skills: project.skills,
-          categories: project.categories
+          categories: project.categories,
+          images: project.images
         }}
         submitText="Update"
         resetText="Cancel"

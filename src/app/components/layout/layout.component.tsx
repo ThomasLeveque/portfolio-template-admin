@@ -40,6 +40,9 @@ const LayoutComponent: React.FC<IProps> = ({ withHeader = true, pageClassName = 
             <Menu.Item key="/categories">
               <Link to="/entities/categories">Categories</Link>
             </Menu.Item>
+            <Menu.Item key="/images">
+              <Link to="/entities/images">Images</Link>
+            </Menu.Item>
           </Menu>
           <Button
             loading={logoutLoading}

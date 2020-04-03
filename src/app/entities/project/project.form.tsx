@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Formik, FormikHelpers } from 'formik';
+import { Formik, FormikHelpers, FormikProps } from 'formik';
 import { ProjectInitialState } from './project.initial-state';
 import projectSchema from './project.schema';
 import { Form, Input, ResetButton, SubmitButton, DatePicker, Select } from 'formik-antd';
@@ -64,7 +64,7 @@ const ProjectForm: React.FC<IProps> = ({ callback, initialValues, submitText, re
       initialValues={initialValues}
       enableReinitialize
     >
-      {({ values, setFieldValue }) => {
+      {({ values, setFieldValue }: FormikProps<ProjectInitialState>) => {
         return (
           <Form>
             <Form.Item name="name" required label="Name">
