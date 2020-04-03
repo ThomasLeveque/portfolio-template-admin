@@ -10,12 +10,10 @@ const CategoryPage = lazy(() => import('./category/pages/category.page'));
 const CategoriesPage = lazy(() => import('./category/pages/categories.page'));
 const ProjectPage = lazy(() => import('./project/pages/project.page'));
 const ProjectsPage = lazy(() => import('./project/pages/projects.page'));
-const ImagesPage = lazy(() => import('./image/pages/images.page'));
 
 export const entitiesRoutesMap = [
   { path: '/entities/projects', component: ProjectsPage },
   { path: '/entities/categories', component: CategoriesPage },
-  { path: '/entities/images', component: ImagesPage },
   { path: '/entities/categories/:categoryId', component: CategoryPage },
   { path: '/entities/projects/:projectId', component: ProjectPage }
 ];

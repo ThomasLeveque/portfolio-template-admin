@@ -3,11 +3,11 @@ import { Form, Input, SubmitButton, ResetButton } from 'formik-antd';
 import { Formik, FormikHelpers } from 'formik';
 import { Typography } from 'antd';
 
-import LayoutComponent from '../components/layout/layout.component';
-import userSchema from './user.schema';
-import { UserInitialState } from './user.initial-state';
-import { login } from './user.service';
-import { useNotif } from '../notification/notification.context';
+import LayoutComponent from '../../components/layout/layout.component';
+import userSchema from '../user.schema';
+import { UserInitialState } from '../user.initial-state';
+import { login } from '../user.service';
+import { useNotif } from '../../notification/notification.context';
 
 import './user-auth.styles.less';
 
