@@ -5,7 +5,7 @@ import { CategoryInitialState } from './category.initial-state';
 import { Category } from './category.model';
 import { formatError } from '../../utils/format-error.util';
 import { CategoryContext } from './category.context';
-import { COLLECTION_NAME } from './category.util';
+import { COLLECTION_NAME, checkForExistingCategory } from './category.util';
 import { Project } from '../project/project.model';
 
 const CategoryProvider: React.FC = memo(({ children }) => {
@@ -16,15 +16,7 @@ const CategoryProvider: React.FC = memo(({ children }) => {
 
   const addCategory = async (values: CategoryInitialState): Promise<void> => {
     try {
-      const lowerName = values.name.toLowerCase();
-      const snapshot: firebase.firestore.QuerySnapshot = await firestore
-        .collection(COLLECTION_NAME)
-        .where('name', '==', lowerName)
-        .get();
-
-      if (!snapshot.empty) {
-        throw new Error(`Category ${values.name} already exist !`);
-      }
+      const lowerName = await checkForExistingCategory(values.name);
       const newCategory: Category = {
         ...values,
         createdAt: Date.now(),

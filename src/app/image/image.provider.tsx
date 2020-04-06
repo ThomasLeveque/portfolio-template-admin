@@ -16,19 +16,13 @@ const ImageProvider: React.FC = memo(({ children }) => {
   const [addImageLoading, setAddImageLoading] = useState<boolean>(false);
   const { openNotification, openMessage } = useNotif();
 
-  const addImage = async (newImage: Image): Promise<void> => {
+  const addImage = async (newImage: Image): Promise<string | undefined> => {
     try {
-      const { empty, docs }: firebase.firestore.QuerySnapshot = await firestore
+      const { id }: firebase.firestore.DocumentReference = await firestore
         .collection(COLLECTION_NAME)
-        .where('name', '==', newImage.name)
-        .get();
-      if (!empty) {
-        for (const { id } of docs) {
-          await firestore.collection(COLLECTION_NAME).doc(id).delete();
-        }
-      }
-      await firestore.collection(COLLECTION_NAME).add(newImage);
+        .add(newImage);
       openMessage('Image added successfully', 'success');
+      return id;
     } catch (err) {
       openNotification(err?.message, err?.code, 'error');
       console.error(err);
@@ -72,11 +66,30 @@ const ImageProvider: React.FC = memo(({ children }) => {
     }
   };
 
-  const uploadImage = async (file: RcFile, fileType: string, fileSize: number): Promise<void> => {
+  const uploadImage = async (file: RcFile): Promise<Image | undefined> => {
     try {
+      const fileSize: number = file.size / 1024 / 1024;
+      const fileType: string = file.type.replace('image/', '');
+      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+      if (!isJpgOrPng) {
+        throw new Error('You can only upload JPG/PNG file!');
+      }
+      const isLt2M = fileSize < 2;
+      if (!isLt2M) {
+        throw new Error('Image must smaller than 2MB!');
+      }
+
       const fileName = file.name.toLowerCase();
 
       setAddImageLoading(true);
+      const { empty }: firebase.firestore.QuerySnapshot = await firestore
+        .collection(COLLECTION_NAME)
+        .where('name', '==', fileName)
+        .get();
+      if (!empty) {
+        throw new Error(`Image ${file.name} already exist !`);
+      }
+
       const imagePath: string = `images/${fileName}`;
 
       const imageProjectRef: firebase.storage.Reference = storage.ref().child(imagePath);
@@ -92,8 +105,12 @@ const ImageProvider: React.FC = memo(({ children }) => {
         fileSize,
         createdAt: Date.now(),
       };
-      await addImage(newImage);
+      const projectId = await addImage(newImage);
       setAddImageLoading(false);
+      return {
+        id: projectId,
+        ...newImage,
+      };
     } catch (err) {
       openNotification(err?.message, err?.code, 'error');
       console.error(err);

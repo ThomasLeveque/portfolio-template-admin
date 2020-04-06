@@ -1,5 +1,4 @@
 import React from 'react';
-import { useNotif } from '../../notification/notification.context';
 import { Upload, List, Typography } from 'antd';
 import { RcFile } from 'antd/lib/upload';
 import { RocketOutlined, LoadingOutlined } from '@ant-design/icons';
@@ -11,7 +10,6 @@ import './images.styles.less';
 import CardImage from '../components/card-image.component';
 
 const ImagesPage = () => {
-  const { openMessage } = useNotif();
   const { Dragger } = Upload;
   const { images, imagesLoading, uploadImage, removeImageLoading, addImageLoading } = useImage();
   const { Title } = Typography;
@@ -19,23 +17,11 @@ const ImagesPage = () => {
   return (
     <LayoutComponent pageClassName="images page">
       <Dragger
-        name="file"
+        name="images"
         multiple
         showUploadList={false}
         beforeUpload={(file: RcFile) => {
-          const fileSize: number = file.size / 1024 / 1024;
-          const fileType: string = file.type.replace('image/', '');
-          const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-          if (!isJpgOrPng) {
-            openMessage('You can only upload JPG/PNG file!', 'error');
-            return false;
-          }
-          const isLt2M = fileSize < 2;
-          if (!isLt2M) {
-            openMessage('Image must smaller than 2MB!', 'error');
-            return false;
-          }
-          uploadImage(file, fileType, fileSize);
+          uploadImage(file);
           return false;
         }}
       >

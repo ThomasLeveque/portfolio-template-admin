@@ -8,7 +8,7 @@ import { CategoryInitialState } from '../category.initial-state';
 import LoadingComponent from '../../../components/loading/loading.component';
 import { toCapitalize } from '../../../utils/parse-string.util';
 import CategoryForm from '../category.form';
-import { COLLECTION_NAME } from '../category.util';
+import { COLLECTION_NAME, checkForExistingCategory } from '../category.util';
 import { Project } from '../../project/project.model';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -31,23 +31,26 @@ const CategoryPage = () => {
 
   const updateCategory = async (values: CategoryInitialState): Promise<void> => {
     try {
+      const lowerName = await checkForExistingCategory(values.name);
+
       const batch = firestore.batch();
       const projectsRef: firebase.firestore.CollectionReference = firestore.collection('projects');
       const categoryRef: firebase.firestore.DocumentReference = firestore
         .collection(COLLECTION_NAME)
         .doc(categoryId);
       const updatedCategory: Category = {
+        ...values,
         createdAt: category?.createdAt as number,
         updatedAt: Date.now(),
-        ...values
+        name: lowerName,
       };
 
-      const snapshot: firebase.firestore.QuerySnapshot = await projectsRef
+      const projectsSnapshot: firebase.firestore.QuerySnapshot = await projectsRef
         .where('categories', 'array-contains', category?.name)
         .get();
       // It means the category deleted is not used
-      if (!snapshot.empty) {
-        for (const doc of snapshot.docs) {
+      if (!projectsSnapshot.empty) {
+        for (const doc of projectsSnapshot.docs) {
           const projectRef = projectsRef.doc(doc.id);
           const project = new Project(doc);
           const newCategories = project.categories

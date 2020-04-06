@@ -3,13 +3,14 @@ import { Formik, FormikHelpers, FormikProps } from 'formik';
 import { ProjectInitialState } from './project.initial-state';
 import projectSchema from './project.schema';
 import { Form, Input, ResetButton, SubmitButton, DatePicker, Select } from 'formik-antd';
-import { Input as AntdInput, Button as AntdButton, Tag, Modal, List } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Input as AntdInput, Button as AntdButton, Tag, Modal, List, Upload } from 'antd';
+import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import { useCategory } from '../category/category.context';
 import { Category } from '../category/category.model';
 import { useImage } from '../../image/image.context';
 import { Image } from '../../image/image.model';
 import CardImage from '../../image/components/card-image.component';
+import { RcFile } from 'antd/lib/upload/interface';
 
 interface IProps {
   callback: (values: ProjectInitialState) => Promise<void>;
@@ -24,7 +25,7 @@ const ProjectForm: React.FC<IProps> = ({ callback, initialValues, submitText, re
   const [skillsInputValue, setSkillsInputValue] = useState<string>('');
   const inputRef = useRef<AntdInput>(null);
   const { categories } = useCategory();
-  const { images } = useImage();
+  const { images, uploadImage, addImageLoading } = useImage();
   const { Option } = Select;
 
   const hideModal = () => {
@@ -89,6 +90,12 @@ const ProjectForm: React.FC<IProps> = ({ callback, initialValues, submitText, re
           }
         };
 
+        const uploadImageAndAddToProject = async (file: RcFile) => {
+          const image = await uploadImage(file);
+          if (!image) return;
+          setFieldValue('images', [image, ...values.images]);
+        };
+
         const imagesSize: number = values.images.length;
 
         return (
@@ -149,6 +156,22 @@ const ProjectForm: React.FC<IProps> = ({ callback, initialValues, submitText, re
                   <AntdButton icon={<PlusOutlined />} onClick={showModal} type="primary">
                     Add images ({imagesSize})
                   </AntdButton>
+                  <Upload
+                    name="projectImage"
+                    showUploadList={false}
+                    beforeUpload={(file: RcFile) => {
+                      uploadImageAndAddToProject(file);
+                      return false;
+                    }}
+                  >
+                    <AntdButton
+                      style={{ marginLeft: 16 }}
+                      loading={addImageLoading}
+                      icon={<UploadOutlined />}
+                    >
+                      Click to Upload
+                    </AntdButton>
+                  </Upload>
                   {imagesSize > 0 && (
                     <List
                       style={{ marginTop: 24 }}

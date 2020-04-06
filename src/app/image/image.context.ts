@@ -7,7 +7,7 @@ interface IImageContext {
   removeImageLoading: boolean;
   imagesLoading: boolean;
   addImageLoading: boolean;
-  uploadImage: (file: RcFile, fileType: string, fileSize: number) => Promise<void>;
+  uploadImage: (file: RcFile) => Promise<Image | undefined>;
   removeImage: (image: Image) => Promise<void>;
 }
 
@@ -16,8 +16,8 @@ export const ImageContext = createContext<IImageContext>({
   removeImageLoading: false,
   imagesLoading: false,
   addImageLoading: false,
-  uploadImage: async () => {},
-  removeImage: async () => {}
+  uploadImage: async () => undefined,
+  removeImage: async () => {},
 });
 
 export const useImage = () => useContext(ImageContext);
