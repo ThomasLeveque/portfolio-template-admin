@@ -16,10 +16,20 @@ const CategoryProvider: React.FC = memo(({ children }) => {
 
   const addCategory = async (values: CategoryInitialState): Promise<void> => {
     try {
+      const lowerName = values.name.toLowerCase();
+      const snapshot: firebase.firestore.QuerySnapshot = await firestore
+        .collection(COLLECTION_NAME)
+        .where('name', '==', lowerName)
+        .get();
+
+      if (!snapshot.empty) {
+        throw new Error(`Category ${values.name} already exist !`);
+      }
       const newCategory: Category = {
+        ...values,
         createdAt: Date.now(),
         updatedAt: Date.now(),
-        ...values,
+        name: lowerName,
       };
       await firestore.collection(COLLECTION_NAME).add(newCategory);
       openMessage('Category added successfully', 'success');
