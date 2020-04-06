@@ -5,6 +5,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import CategoryForm from '../category.form';
 import { useCategory } from '../category.context';
+import { formatDistanceToNow } from 'date-fns';
 
 const CategoriesPage = () => {
   const {
@@ -24,11 +25,23 @@ const CategoriesPage = () => {
       <Table<Category>
         loading={categoriesLoading || removeCategoryLoading}
         dataSource={categories}
-        scroll={{ x: 1300 }}
+        scroll={{ x: true }}
       >
         <Table.Column<Category> key="name" title="Name" dataIndex="name" />
-        <Table.Column<Category> key="createdAt" title="Created about" dataIndex="createdAt" />
-        <Table.Column<Category> key="updatedAt" title="Updated about" dataIndex="updatedAt" />
+        <Table.Column<Category>
+          key="createdAt"
+          title="Created about"
+          dataIndex="createdAt"
+          width={200}
+          render={(createdAt: number) => formatDistanceToNow(createdAt)}
+        />
+        <Table.Column<Category>
+          key="updatedAt"
+          title="Updated about"
+          dataIndex="updatedAt"
+          width={200}
+          render={(updatedAt: number) => formatDistanceToNow(updatedAt)}
+        />
         <Table.Column<Category>
           key="action"
           title="Action"

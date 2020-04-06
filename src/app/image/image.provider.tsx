@@ -7,6 +7,7 @@ import { formatError } from '../utils/format-error.util';
 import { firestore, storage } from '../firebase/firebase.service';
 import { COLLECTION_NAME } from './image.util';
 import { RcFile } from 'antd/lib/upload/interface';
+import { Project } from '../entities/project/project.model';
 
 const ImageProvider: React.FC = memo(({ children }) => {
   const [images, setImages] = useState<Image[]>([]);
@@ -23,10 +24,7 @@ const ImageProvider: React.FC = memo(({ children }) => {
         .get();
       if (!empty) {
         for (const { id } of docs) {
-          await firestore
-            .collection(COLLECTION_NAME)
-            .doc(id)
-            .delete();
+          await firestore.collection(COLLECTION_NAME).doc(id).delete();
         }
       }
       await firestore.collection(COLLECTION_NAME).add(newImage);
@@ -38,17 +36,33 @@ const ImageProvider: React.FC = memo(({ children }) => {
     }
   };
 
-  const removeImage = async ({ id, name }: Image): Promise<void> => {
+  const removeImage = async (image: Image): Promise<void> => {
     try {
+      const { id, path } = image;
       setRemoveImageLoading(true);
-      await firestore
+      const batch = firestore.batch();
+
+      const projectsRef: firebase.firestore.CollectionReference = firestore.collection('projects');
+      const imageRef: firebase.firestore.DocumentReference = firestore
         .collection(COLLECTION_NAME)
-        .doc(id)
-        .delete();
-      await storage
-        .ref()
-        .child(`images/${name}`)
-        .delete();
+        .doc(id);
+
+      const snapshot: firebase.firestore.QuerySnapshot = await projectsRef
+        .where(COLLECTION_NAME, 'array-contains', Object.assign({}, image))
+        .get();
+      // It means the category deleted is not used
+      if (!snapshot.empty) {
+        for (const doc of snapshot.docs) {
+          const projectRef = projectsRef.doc(doc.id);
+          const project = new Project(doc);
+          const newImages = project.images.filter((image: Image) => image.id !== id);
+          batch.update(projectRef, COLLECTION_NAME, newImages);
+        }
+      }
+
+      batch.delete(imageRef);
+      await storage.ref().child(path).delete();
+      await batch.commit();
       openMessage('Image removed successfully', 'success');
       setRemoveImageLoading(false);
     } catch (err) {
@@ -76,7 +90,7 @@ const ImageProvider: React.FC = memo(({ children }) => {
         url: imageUrl,
         fileType,
         fileSize,
-        createdAt: Date.now()
+        createdAt: Date.now(),
       };
       await addImage(newImage);
       setAddImageLoading(false);
@@ -119,7 +133,7 @@ const ImageProvider: React.FC = memo(({ children }) => {
         addImageLoading,
         removeImageLoading,
         uploadImage,
-        removeImage
+        removeImage,
       }}
     >
       {children}

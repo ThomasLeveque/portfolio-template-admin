@@ -10,6 +10,7 @@ import { toCapitalize } from '../../../utils/parse-string.util';
 import CategoryForm from '../category.form';
 import { COLLECTION_NAME } from '../category.util';
 import { Project } from '../../project/project.model';
+import { formatDistanceToNow } from 'date-fns';
 
 const CategoryPage = () => {
   const [category, setCategory] = useState<Category | null>(null);
@@ -36,6 +37,7 @@ const CategoryPage = () => {
         .collection(COLLECTION_NAME)
         .doc(categoryId);
       const updatedCategory: Category = {
+        createdAt: category?.createdAt as number,
         updatedAt: Date.now(),
         ...values
       };
@@ -48,7 +50,10 @@ const CategoryPage = () => {
         for (const doc of snapshot.docs) {
           const projectRef = projectsRef.doc(doc.id);
           const project = new Project(doc);
-          const newCategories = project.categories.join(',').replace(`${category?.name}`, values.name).split(',');
+          const newCategories = project.categories
+            .join(',')
+            .replace(`${category?.name}`, values.name)
+            .split(',');
           batch.update(projectRef, 'categories', newCategories);
         }
       }
@@ -78,8 +83,12 @@ const CategoryPage = () => {
         resetText="Cancel"
       />
       <Descriptions bordered title="Date Infos">
-        <Descriptions.Item label="Created about">{category.createdAt}</Descriptions.Item>
-        <Descriptions.Item label="Updated about">{category.updatedAt}</Descriptions.Item>
+        <Descriptions.Item label="Created about">
+          {formatDistanceToNow(category.createdAt)}
+        </Descriptions.Item>
+        <Descriptions.Item label="Updated about">
+          {formatDistanceToNow(category.updatedAt)}
+        </Descriptions.Item>
       </Descriptions>
     </div>
   );

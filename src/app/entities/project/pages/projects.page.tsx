@@ -5,6 +5,7 @@ import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Project } from '../project.model';
 import ProjectForm from '../project.form';
 import { useProject } from '../project.context';
+import { format, formatDistanceToNow } from 'date-fns';
 
 const ProjectsPage = () => {
   const {
@@ -24,15 +25,16 @@ const ProjectsPage = () => {
       <Table<Project>
         loading={projectsLoading || removeProjectLoading}
         dataSource={projects}
-        scroll={{ x: 1300 }}
+        scroll={{ x: true }}
       >
-        <Table.Column<Project> key="name" title="Name" dataIndex="name" width={120} />
-        <Table.Column<Project> key="desc" title="Desc" dataIndex="desc" width={120} />
+        <Table.Column<Project> key="name" title="Name" dataIndex="name" width={140} />
+        <Table.Column<Project> key="desc" title="Desc" dataIndex="desc" width={200} />
         <Table.Column<Project>
           key="formatedDate"
           title="Project date"
           dataIndex="formatedDate"
-          width={120}
+          width={140}
+          render={(date: string) => format(new Date(date), 'MMMM yyyy')}
         />
         <Table.Column<Project>
           key="skills"
@@ -77,22 +79,18 @@ const ProjectsPage = () => {
           )}
         />
         <Table.Column<Project>
-          key="formatedDate"
-          title="Project date"
-          dataIndex="formatedDate"
-          width={120}
-        />
-        <Table.Column<Project>
           key="createdAt"
           title="Created about"
           dataIndex="createdAt"
-          width={120}
+          width={140}
+          render={(createdAt: number) => formatDistanceToNow(createdAt)}
         />
         <Table.Column<Project>
           key="updatedAt"
           title="Updated about"
           dataIndex="updatedAt"
-          width={120}
+          width={140}
+          render={(updatedAt: number) => formatDistanceToNow(updatedAt)}
         />
         <Table.Column<Project>
           key="action"

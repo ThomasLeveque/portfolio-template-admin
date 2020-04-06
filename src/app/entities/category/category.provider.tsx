@@ -19,7 +19,7 @@ const CategoryProvider: React.FC = memo(({ children }) => {
       const newCategory: Category = {
         createdAt: Date.now(),
         updatedAt: Date.now(),
-        ...values
+        ...values,
       };
       await firestore.collection(COLLECTION_NAME).add(newCategory);
       openMessage('Category added successfully', 'success');
@@ -39,7 +39,7 @@ const CategoryProvider: React.FC = memo(({ children }) => {
         .doc(id);
 
       const snapshot: firebase.firestore.QuerySnapshot = await projectsRef
-        .where('categories', 'array-contains', name)
+        .where(COLLECTION_NAME, 'array-contains', name)
         .get();
       // It means the category deleted is not used
       if (!snapshot.empty) {
@@ -47,7 +47,7 @@ const CategoryProvider: React.FC = memo(({ children }) => {
           const projectRef = projectsRef.doc(doc.id);
           const project = new Project(doc);
           const newCategories = project.categories.filter((category: string) => category !== name);
-          batch.update(projectRef, 'categories', newCategories);
+          batch.update(projectRef, COLLECTION_NAME, newCategories);
         }
       }
       batch.delete(categoryRef);
@@ -92,7 +92,7 @@ const CategoryProvider: React.FC = memo(({ children }) => {
         categoriesLoading,
         removeCategoryLoading,
         addCategory,
-        removeCategory
+        removeCategory,
       }}
     >
       {children}

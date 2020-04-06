@@ -1,5 +1,3 @@
-import { formatDistanceToNow } from 'date-fns';
-
 export class Image {
   id?: string;
   name: string;
@@ -7,7 +5,7 @@ export class Image {
   path: string;
   fileSize: number;
   fileType: string;
-  createdAt?: number | string;
+  createdAt: number;
 
   constructor(json: firebase.firestore.DocumentSnapshot) {
     const jsonData = json.data();
@@ -18,6 +16,6 @@ export class Image {
     this.path = jsonData?.path;
     this.fileSize = jsonData?.fileSize;
     this.fileType = jsonData?.fileType;
-    this.createdAt = formatDistanceToNow(jsonData?.createdAt);
+    this.createdAt = jsonData?.createdAt;
   }
 }

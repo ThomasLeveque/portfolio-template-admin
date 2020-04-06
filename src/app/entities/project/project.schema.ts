@@ -1,4 +1,5 @@
 import * as yup from 'yup';
+import { Image } from '../../image/image.model';
 
 const max = 255;
 
@@ -14,7 +15,7 @@ const projectSchema = yup.object().shape({
   date: yup.string().required('Date required'),
   skills: yup.array<string>(),
   categories: yup.array<string>().required('At least one category required'),
-  images: yup.array<any>(),
+  images: yup.array<Image>()
 });
 
 export default projectSchema;

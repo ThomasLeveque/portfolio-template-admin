@@ -1,5 +1,3 @@
-import { formatDistanceToNow, format } from 'date-fns';
-
 export class Project {
   id?: string;
   key?: string;
@@ -10,8 +8,8 @@ export class Project {
   skills: string[];
   categories: string[];
   images: any[];
-  createdAt?: number | string;
-  updatedAt?: number | string;
+  createdAt: number;
+  updatedAt: number;
 
   constructor(json: firebase.firestore.DocumentSnapshot) {
     const jsonData = json.data();
@@ -20,11 +18,11 @@ export class Project {
     this.name = jsonData?.name;
     this.desc = jsonData?.desc;
     this.date = jsonData?.date;
-    this.formatedDate = format(new Date(jsonData?.date), 'MMMM yyyy');
+    this.formatedDate = jsonData?.date;
     this.skills = jsonData?.skills || [];
     this.categories = jsonData?.categories || [];
     this.images = jsonData?.images || [];
-    this.createdAt = formatDistanceToNow(jsonData?.createdAt);
-    this.updatedAt = formatDistanceToNow(jsonData?.updatedAt);
+    this.createdAt = jsonData?.createdAt;
+    this.updatedAt = jsonData?.updatedAt;
   }
 }

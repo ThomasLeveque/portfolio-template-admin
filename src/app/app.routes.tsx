@@ -21,7 +21,9 @@ const AppRoutes = () => {
         </Route>
         <ImageProvider>
           <Route path="/entities">{user ? <Entities /> : <Redirect to="/" />}</Route>
-          <Route path="/images">{user ? <ImagePage /> : <Redirect to="/" />}</Route>
+          <Route exact path="/images">
+            {user ? <ImagePage /> : <Redirect to="/" />}
+          </Route>
         </ImageProvider>
         <Route path="*">
           <NotFound />

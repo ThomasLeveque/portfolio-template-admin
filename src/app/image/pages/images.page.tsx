@@ -1,25 +1,20 @@
 import React from 'react';
 import { useNotif } from '../../notification/notification.context';
-import { Upload, Card, List, Tooltip } from 'antd';
+import { Upload, List, Typography } from 'antd';
 import { RcFile } from 'antd/lib/upload';
-import { RocketOutlined, LoadingOutlined, EyeTwoTone, DeleteTwoTone } from '@ant-design/icons';
+import { RocketOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Image } from '../image.model';
 import LayoutComponent from '../../components/layout/layout.component';
 import { useImage } from '../image.context';
 
 import './images.styles.less';
+import CardImage from '../components/card-image.component';
 
 const ImagesPage = () => {
   const { openMessage } = useNotif();
   const { Dragger } = Upload;
-  const {
-    images,
-    imagesLoading,
-    removeImage,
-    uploadImage,
-    removeImageLoading,
-    addImageLoading
-  } = useImage();
+  const { images, imagesLoading, uploadImage, removeImageLoading, addImageLoading } = useImage();
+  const { Title } = Typography;
 
   return (
     <LayoutComponent pageClassName="images page">
@@ -47,39 +42,20 @@ const ImagesPage = () => {
         {addImageLoading ? <LoadingOutlined /> : <RocketOutlined />}
         <div className="upload-text">Select or drag and drop your files here</div>
       </Dragger>
-
+      <Title level={1}>My Images</Title>
       <List
         loading={imagesLoading || removeImageLoading}
         grid={{
           gutter: 16,
           xs: 1,
           sm: 2,
-          md: 2,
-          lg: 3,
-          xl: 3,
-          xxl: 3
+          md: 3,
+          lg: 4,
+          xl: 4,
+          xxl: 4,
         }}
         dataSource={images}
-        renderItem={(image: Image) => (
-          <List.Item>
-            <Tooltip title={image.name}>
-              <Card
-                style={{ cursor: 'initial' }}
-                hoverable
-                title={image.name}
-                actions={[
-                  <a target="_blank" rel="noopener noreferrer" href={image.url}>
-                    <EyeTwoTone />
-                  </a>,
-                  <DeleteTwoTone onClick={() => removeImage(image)} twoToneColor="#ff7875" />
-                ]}
-              >
-                <p>Type: {image.fileType}</p>
-                <p>Size: {image.fileSize.toFixed(3)} Mo</p>
-              </Card>
-            </Tooltip>
-          </List.Item>
-        )}
+        renderItem={(image: Image) => <CardImage image={image} />}
       />
     </LayoutComponent>
   );

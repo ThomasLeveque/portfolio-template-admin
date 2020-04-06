@@ -9,6 +9,7 @@ import { ProjectInitialState } from '../project.initial-state';
 import { useNotif } from '../../../notification/notification.context';
 import ProjectForm from '../project.form';
 import { COLLECTION_NAME } from '../project.util';
+import { formatDistanceToNow } from 'date-fns';
 
 const ProjectPage = () => {
   const [project, setProject] = useState<Project | null>(null);
@@ -30,6 +31,7 @@ const ProjectPage = () => {
   const updateProject = async (values: ProjectInitialState): Promise<void> => {
     try {
       const updatedProject: Project = {
+        createdAt: project?.createdAt as number,
         updatedAt: Date.now(),
         ...values
       };
@@ -68,8 +70,12 @@ const ProjectPage = () => {
         resetText="Cancel"
       />
       <Descriptions bordered title="Date Infos">
-        <Descriptions.Item label="Created about">{project.createdAt}</Descriptions.Item>
-        <Descriptions.Item label="Updated about">{project.updatedAt}</Descriptions.Item>
+        <Descriptions.Item label="Created about">
+          {formatDistanceToNow(project.createdAt)}
+        </Descriptions.Item>
+        <Descriptions.Item label="Updated about">
+          {formatDistanceToNow(project.updatedAt)}
+        </Descriptions.Item>
       </Descriptions>
     </div>
   );
