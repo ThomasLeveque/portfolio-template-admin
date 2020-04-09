@@ -9,7 +9,7 @@ interface IProps {
   withHeader?: boolean;
 }
 
-const LoadingComponent: React.FC<IProps> = ({ withHeader = false, ...props }) => {
+const LoadingComponent: React.FC<IProps> = ({ withHeader = false }) => {
   return (
     <div
       className="loading"

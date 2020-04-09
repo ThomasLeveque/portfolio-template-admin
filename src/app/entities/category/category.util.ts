@@ -1,5 +1,6 @@
 import { firestore } from '../../firebase/firebase.service';
-export const COLLECTION_NAME = 'categories';
+
+export const COLLECTION_NAME: string = 'categories';
 
 export const checkForExistingCategory = async (categoryName: string): Promise<string> => {
   const lowerName = categoryName.toLowerCase();

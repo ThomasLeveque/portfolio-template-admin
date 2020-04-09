@@ -33,12 +33,9 @@ const ProjectPage = () => {
       const updatedProject: Project = {
         createdAt: project?.createdAt as number,
         updatedAt: Date.now(),
-        ...values
+        ...values,
       };
-      await firestore
-        .collection(COLLECTION_NAME)
-        .doc(projectId)
-        .update(updatedProject);
+      await firestore.collection(COLLECTION_NAME).doc(projectId).update(updatedProject);
       openMessage('Project updated successfully', 'success');
     } catch (err) {
       openNotification(err?.message, err?.code, 'error');
@@ -61,10 +58,12 @@ const ProjectPage = () => {
         initialValues={{
           name: project.name,
           desc: project.desc,
+          projectUrl: project.projectUrl,
+          projectSrc: project.projectSrc,
           date: project.date,
           skills: project.skills,
           categories: project.categories,
-          images: project.images
+          images: project.images,
         }}
         submitText="Update"
         resetText="Cancel"

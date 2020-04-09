@@ -28,15 +28,15 @@ const ProjectForm: React.FC<IProps> = ({ callback, initialValues, submitText, re
   const { images, uploadImage, addImageLoading } = useImage();
   const { Option } = Select;
 
-  const hideModal = () => {
+  const hideModal = (): void => {
     setModalVisible(false);
   };
 
-  const showModal = () => {
+  const showModal = (): void => {
     setModalVisible(true);
   };
 
-  const showSkillsInput = () => {
+  const showSkillsInput = (): void => {
     setSkillsInputVisible(true);
   };
 
@@ -46,7 +46,7 @@ const ProjectForm: React.FC<IProps> = ({ callback, initialValues, submitText, re
     }
   }, [skillsInputVisible]);
 
-  const handleSkillsInputChange = (event: any) => {
+  const handleSkillsInputChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setSkillsInputValue(event.target.value);
   };
 
@@ -54,7 +54,7 @@ const ProjectForm: React.FC<IProps> = ({ callback, initialValues, submitText, re
     return skills.filter((skill) => skill !== skillToRemove);
   };
 
-  const handleAddSkill = (skills: string[]): string[] | undefined => {
+  const handleAddSkill = (skills: string[]): string[] => {
     if (skillsInputValue && skills.indexOf(skillsInputValue) === -1) {
       setSkillsInputValue('');
       setSkillsInputVisible(false);
@@ -106,6 +106,12 @@ const ProjectForm: React.FC<IProps> = ({ callback, initialValues, submitText, re
               </Form.Item>
               <Form.Item name="desc" required label="Desc">
                 <Input name="desc" placeholder="Description" />
+              </Form.Item>
+              <Form.Item name="projectUrl" label="Project Url">
+                <Input name="projectUrl" placeholder="Project Url" />
+              </Form.Item>
+              <Form.Item name="projectSrc" label="Project Source">
+                <Input name="projectSrc" placeholder="Project Source" />
               </Form.Item>
               <Form.Item name="date" required label="Date">
                 <DatePicker picker="month" name="date" />

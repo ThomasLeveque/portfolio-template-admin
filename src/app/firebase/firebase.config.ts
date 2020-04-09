@@ -7,5 +7,5 @@ export const firebaseConfig: IfirebaseConfig = {
   projectId: 'portfolio-tempalte',
   storageBucket: 'portfolio-tempalte.appspot.com',
   messagingSenderId: '470392259715',
-  appId: '1:470392259715:web:a72ea62538c617212007b6'
+  appId: '1:470392259715:web:a72ea62538c617212007b6',
 };

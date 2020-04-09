@@ -13,7 +13,7 @@ const openNotification = (message: string, description: string, type: NotifType)
   notification[type]({
     message,
     description,
-    duration: 5
+    duration: 5,
   });
 };
 

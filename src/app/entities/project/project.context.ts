@@ -16,7 +16,7 @@ export const ProjectContext = createContext<IProjectContext>({
   removeProjectLoading: false,
   projectsLoading: false,
   addProject: async () => {},
-  removeProject: async () => {}
+  removeProject: async () => {},
 });
 
 export const useProject = () => useContext(ProjectContext);

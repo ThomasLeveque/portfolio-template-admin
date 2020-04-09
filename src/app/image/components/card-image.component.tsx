@@ -1,5 +1,4 @@
 import React, { ReactElement } from 'react';
-import { Image } from '../image.model';
 import { Tooltip, Card, Typography, List } from 'antd';
 import { formatDistanceToNow } from 'date-fns';
 import {
@@ -8,10 +7,12 @@ import {
   PlusSquareTwoTone,
   MinusSquareTwoTone,
 } from '@ant-design/icons';
+import { CardSize } from 'antd/lib/card';
+
+import { Image } from '../image.model';
 import { useImage } from '../image.context';
 
 import './card-image.styles.less';
-import { CardSize } from 'antd/lib/card';
 
 interface IProps {
   image: Image;

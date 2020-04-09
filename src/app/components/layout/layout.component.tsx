@@ -18,6 +18,19 @@ const LayoutComponent: React.FC<IProps> = ({ withHeader = true, pageClassName = 
   const location = useLocation();
   const { Header, Content } = Layout;
 
+  const handleLogout = async (): Promise<void> => {
+    try {
+      setLogoutLoading(true);
+      await logout();
+      // Do not setLogoutLoading(false) because route will change
+      openMessage('Your are now logout', 'success');
+    } catch (err) {
+      setLogoutLoading(false);
+      openNotification(err?.message, err?.code, 'error');
+      console.error(err);
+    }
+  };
+
   const parsePathname = (): string => {
     const slitedLocation: string[] = location.pathname.replace('/entities', '').split('/');
     if (!!slitedLocation[0]) {
@@ -44,22 +57,7 @@ const LayoutComponent: React.FC<IProps> = ({ withHeader = true, pageClassName = 
               <Link to="/images">Images</Link>
             </Menu.Item>
           </Menu>
-          <Button
-            loading={logoutLoading}
-            onClick={async () => {
-              try {
-                setLogoutLoading(true);
-                await logout();
-                // Do not setLogoutLoading(false) because route will change
-                openMessage('Your are now logout', 'success');
-              } catch (err) {
-                setLogoutLoading(false);
-                openNotification(err?.message, err?.code, 'error');
-                console.error(err);
-              }
-            }}
-            type="primary"
-          >
+          <Button loading={logoutLoading} onClick={handleLogout} type="primary">
             Logout
           </Button>
         </Header>

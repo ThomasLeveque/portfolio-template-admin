@@ -6,6 +6,7 @@ import { Project } from '../project.model';
 import ProjectForm from '../project.form';
 import { useProject } from '../project.context';
 import { format, formatDistanceToNow } from 'date-fns';
+import { getDomain } from '../../../utils/parse-string.util';
 
 const ProjectsPage = () => {
   const {
@@ -13,7 +14,7 @@ const ProjectsPage = () => {
     projectsLoading,
     removeProject,
     addProject,
-    removeProjectLoading
+    removeProjectLoading,
   } = useProject();
   const history = useHistory();
   const { pathname } = useLocation();
@@ -28,7 +29,29 @@ const ProjectsPage = () => {
         scroll={{ x: true }}
       >
         <Table.Column<Project> key="name" title="Name" dataIndex="name" width={140} />
-        <Table.Column<Project> key="desc" title="Desc" dataIndex="desc" width={200} />
+        <Table.Column<Project> key="desc" title="Desc" dataIndex="desc" width={300} />
+        <Table.Column<Project>
+          key="projectUrl"
+          title="Project Url"
+          dataIndex="projectUrl"
+          width={200}
+          render={(projectUrl: string) => (
+            <a target="_blank" rel="noopener noreferrer" href={projectUrl}>
+              {getDomain(projectUrl)}
+            </a>
+          )}
+        />
+        <Table.Column<Project>
+          key="projectSrc"
+          title="Project Source"
+          dataIndex="projectSrc"
+          width={200}
+          render={(projectSrc: string) => (
+            <a target="_blank" rel="noopener noreferrer" href={projectSrc}>
+              {getDomain(projectSrc)}
+            </a>
+          )}
+        />
         <Table.Column<Project>
           key="formatedDate"
           title="Project date"
@@ -121,10 +144,12 @@ const ProjectsPage = () => {
         initialValues={{
           name: '',
           desc: '',
+          projectUrl: '',
+          projectSrc: '',
           date: '',
           skills: [],
           categories: [],
-          images: []
+          images: [],
         }}
         submitText="Add"
         resetText="Reset"
