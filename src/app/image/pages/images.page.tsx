@@ -1,13 +1,14 @@
 import React from 'react';
 import { Upload, List, Typography } from 'antd';
-import { RcFile } from 'antd/lib/upload';
 import { RocketOutlined, LoadingOutlined } from '@ant-design/icons';
+import { RcFile } from 'antd/lib/upload';
+
 import { Image } from '../image.model';
 import LayoutComponent from '../../components/layout/layout.component';
 import { useImage } from '../image.context';
+import CardImage from '../components/card-image.component';
 
 import './images.styles.less';
-import CardImage from '../components/card-image.component';
 
 const ImagesPage = () => {
   const { Dragger } = Upload;

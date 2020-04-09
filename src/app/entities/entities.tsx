@@ -4,7 +4,7 @@ import EntitiesRoutes from './entities.routes';
 import ProjectProvider from './project/project.provider';
 import CategoryProvider from './category/category.provider';
 
-const Entities = () => (
+const Entities: React.FC = () => (
   <ProjectProvider>
     <CategoryProvider>
       <EntitiesRoutes />

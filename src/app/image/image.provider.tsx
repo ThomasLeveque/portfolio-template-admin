@@ -118,15 +118,17 @@ const ImageProvider: React.FC = memo(({ children }) => {
     }
   };
 
-  const handleSnapshot = (snapshot: firebase.firestore.QuerySnapshot) => {
-    const firestoreCategories = snapshot.docs.map((doc: firebase.firestore.DocumentSnapshot) => {
-      return new Image(doc);
-    });
+  const handleSnapshot = (snapshot: firebase.firestore.QuerySnapshot): void => {
+    const firestoreCategories: Image[] = snapshot.docs.map(
+      (doc: firebase.firestore.DocumentSnapshot) => {
+        return new Image(doc);
+      }
+    );
     setImagesLoading(false);
     setImages(firestoreCategories);
   };
 
-  const handleError = (err: any) => {
+  const handleError = (err: any): void => {
     setImagesLoading(false);
     openNotification('Cannot load your images', formatError(err), 'error');
     console.error(err);

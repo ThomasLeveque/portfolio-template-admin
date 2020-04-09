@@ -28,15 +28,15 @@ const ProjectForm: React.FC<IProps> = ({ callback, initialValues, submitText, re
   const { images, uploadImage, addImageLoading } = useImage();
   const { Option } = Select;
 
-  const hideModal = () => {
+  const hideModal = (): void => {
     setModalVisible(false);
   };
 
-  const showModal = () => {
+  const showModal = (): void => {
     setModalVisible(true);
   };
 
-  const showSkillsInput = () => {
+  const showSkillsInput = (): void => {
     setSkillsInputVisible(true);
   };
 
@@ -46,7 +46,7 @@ const ProjectForm: React.FC<IProps> = ({ callback, initialValues, submitText, re
     }
   }, [skillsInputVisible]);
 
-  const handleSkillsInputChange = (event: any) => {
+  const handleSkillsInputChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setSkillsInputValue(event.target.value);
   };
 
@@ -54,7 +54,7 @@ const ProjectForm: React.FC<IProps> = ({ callback, initialValues, submitText, re
     return skills.filter((skill) => skill !== skillToRemove);
   };
 
-  const handleAddSkill = (skills: string[]): string[] | undefined => {
+  const handleAddSkill = (skills: string[]): string[] => {
     if (skillsInputValue && skills.indexOf(skillsInputValue) === -1) {
       setSkillsInputValue('');
       setSkillsInputVisible(false);

@@ -1,1 +1,1 @@
-export const urlRegex = /^(http|https):\/\/[^ "]+$/;
+export const urlRegex: RegExp = /^(http|https):\/\/[^ "]+$/;

@@ -1,8 +1,9 @@
 import * as yup from 'yup';
+
 import { Image } from '../../image/image.model';
 import { urlRegex } from '../../utils/regex.util';
 
-const max = 255;
+const max: number = 255;
 
 const projectSchema = yup.object().shape({
   name: yup

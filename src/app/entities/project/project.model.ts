@@ -1,3 +1,5 @@
+import { Image } from '../../image/image.model';
+
 export class Project {
   id?: string;
   key?: string;
@@ -9,7 +11,7 @@ export class Project {
   formatedDate?: string;
   skills: string[];
   categories: string[];
-  images: any[];
+  images: Image[];
   createdAt: number;
   updatedAt: number;
 

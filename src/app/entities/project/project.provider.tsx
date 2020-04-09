@@ -19,7 +19,7 @@ const ProjectProvider: React.FC = memo(({ children }) => {
       const newProject: Project = {
         ...values,
         createdAt: Date.now(),
-        updatedAt: Date.now()
+        updatedAt: Date.now(),
       };
       await firestore.collection(COLLECTION_NAME).add(newProject);
       openMessage('Project added successfully', 'success');
@@ -32,10 +32,7 @@ const ProjectProvider: React.FC = memo(({ children }) => {
   const removeProject = async (projectId: string): Promise<void> => {
     try {
       setRemoveProjectLoading(true);
-      await firestore
-        .collection(COLLECTION_NAME)
-        .doc(projectId)
-        .delete();
+      await firestore.collection(COLLECTION_NAME).doc(projectId).delete();
       setRemoveProjectLoading(false);
       openMessage('Project removed successfully', 'success');
     } catch (err) {
@@ -45,7 +42,7 @@ const ProjectProvider: React.FC = memo(({ children }) => {
     }
   };
 
-  const handleSnapshot = (snapshot: firebase.firestore.QuerySnapshot) => {
+  const handleSnapshot = (snapshot: firebase.firestore.QuerySnapshot): void => {
     const firestoreProjects = snapshot.docs.map((doc: firebase.firestore.DocumentSnapshot) => {
       return new Project(doc);
     });
@@ -53,7 +50,7 @@ const ProjectProvider: React.FC = memo(({ children }) => {
     setProjects(firestoreProjects);
   };
 
-  const handleError = (err: any) => {
+  const handleError = (err: any): void => {
     setProjectsLoading(false);
     openNotification('Cannot load your projects', formatError(err), 'error');
     console.error(err);
@@ -76,7 +73,7 @@ const ProjectProvider: React.FC = memo(({ children }) => {
         removeProjectLoading,
         projectsLoading,
         addProject,
-        removeProject
+        removeProject,
       }}
     >
       {children}

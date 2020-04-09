@@ -3,7 +3,7 @@ import { UserInitialState } from './user.initial-state';
 
 export const login = async ({
   email,
-  password
+  password,
 }: UserInitialState): Promise<firebase.auth.UserCredential> => {
   return auth.signInWithEmailAndPassword(email, password);
 };

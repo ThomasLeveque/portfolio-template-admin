@@ -1,1 +1,1 @@
-export const COLLECTION_NAME = 'images';
+export const COLLECTION_NAME: string = 'images';
