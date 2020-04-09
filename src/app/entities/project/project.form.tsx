@@ -107,6 +107,12 @@ const ProjectForm: React.FC<IProps> = ({ callback, initialValues, submitText, re
               <Form.Item name="desc" required label="Desc">
                 <Input name="desc" placeholder="Description" />
               </Form.Item>
+              <Form.Item name="projectUrl" label="Project Url">
+                <Input name="projectUrl" placeholder="Project Url" />
+              </Form.Item>
+              <Form.Item name="projectSrc" label="Project Source">
+                <Input name="projectSrc" placeholder="Project Source" />
+              </Form.Item>
               <Form.Item name="date" required label="Date">
                 <DatePicker picker="month" name="date" />
               </Form.Item>

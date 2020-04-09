@@ -3,6 +3,8 @@ export class Project {
   key?: string;
   name: string;
   desc: string;
+  projectUrl: string;
+  projectSrc: string;
   date: string;
   formatedDate?: string;
   skills: string[];
@@ -17,6 +19,8 @@ export class Project {
     this.key = json.id;
     this.name = jsonData?.name;
     this.desc = jsonData?.desc;
+    this.projectUrl = jsonData?.projectUrl || '';
+    this.projectSrc = jsonData?.projectSrc || '';
     this.date = jsonData?.date;
     this.formatedDate = jsonData?.date;
     this.skills = jsonData?.skills || [];
