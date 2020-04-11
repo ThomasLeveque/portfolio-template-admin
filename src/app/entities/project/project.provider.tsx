@@ -7,6 +7,7 @@ import { ProjectInitialState } from './project.initial-state';
 import { firestore } from '../../firebase/firebase.service';
 import { COLLECTION_NAME } from './project.util';
 import { formatError } from '../../utils/format-error.util';
+import ProjectSerializer from './project.serializer';
 
 const ProjectProvider: React.FC = memo(({ children }) => {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -43,9 +44,9 @@ const ProjectProvider: React.FC = memo(({ children }) => {
   };
 
   const handleSnapshot = (snapshot: firebase.firestore.QuerySnapshot): void => {
-    const firestoreProjects = snapshot.docs.map((doc: firebase.firestore.DocumentSnapshot) => {
-      return new Project(doc);
-    });
+    const firestoreProjects = snapshot.docs.map((doc: firebase.firestore.DocumentSnapshot) =>
+      ProjectSerializer.fromJson(doc)
+    );
     setProjectsLoading(false);
     setProjects(firestoreProjects);
   };

@@ -5,9 +5,10 @@ import { useNotif } from '../notification/notification.context';
 import { Image } from './image.model';
 import { formatError } from '../utils/format-error.util';
 import { firestore, storage } from '../firebase/firebase.service';
-import { COLLECTION_NAME } from './image.util';
+import { COLLECTION_NAME, PARENT_COLLECTION_NAME } from './image.util';
 import { RcFile } from 'antd/lib/upload/interface';
-import { Project } from '../entities/project/project.model';
+import ProjectSerializer from '../entities/project/project.serializer';
+import ImageSerializer from './image.serializer';
 
 const ImageProvider: React.FC = memo(({ children }) => {
   const [images, setImages] = useState<Image[]>([]);
@@ -36,19 +37,21 @@ const ImageProvider: React.FC = memo(({ children }) => {
       setRemoveImageLoading(true);
       const batch = firestore.batch();
 
-      const projectsRef: firebase.firestore.CollectionReference = firestore.collection('projects');
+      const projectsRef: firebase.firestore.CollectionReference = firestore.collection(
+        PARENT_COLLECTION_NAME
+      );
       const imageRef: firebase.firestore.DocumentReference = firestore
         .collection(COLLECTION_NAME)
         .doc(id);
 
       const snapshot: firebase.firestore.QuerySnapshot = await projectsRef
-        .where(COLLECTION_NAME, 'array-contains', Object.assign({}, image))
+        .where(COLLECTION_NAME, 'array-contains', ImageSerializer.toJson(image))
         .get();
       // It means the category deleted is not used
       if (!snapshot.empty) {
         for (const doc of snapshot.docs) {
           const projectRef = projectsRef.doc(doc.id);
-          const project = new Project(doc);
+          const project = ProjectSerializer.fromJson(doc);
           const newImages = project.images.filter((image: Image) => image.id !== id);
           batch.update(projectRef, COLLECTION_NAME, newImages);
         }
@@ -120,9 +123,7 @@ const ImageProvider: React.FC = memo(({ children }) => {
 
   const handleSnapshot = (snapshot: firebase.firestore.QuerySnapshot): void => {
     const firestoreCategories: Image[] = snapshot.docs.map(
-      (doc: firebase.firestore.DocumentSnapshot) => {
-        return new Image(doc);
-      }
+      (doc: firebase.firestore.DocumentSnapshot) => ImageSerializer.fromJson(doc)
     );
     setImagesLoading(false);
     setImages(firestoreCategories);
