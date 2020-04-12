@@ -11,6 +11,7 @@ import { useImage } from '../../image/image.context';
 import { Image } from '../../image/image.model';
 import CardImage from '../../image/components/card-image.component';
 import { RcFile } from 'antd/lib/upload/interface';
+import ImageSerializer from '../../image/image.serializer';
 
 interface IProps {
   callback: (values: ProjectInitialState) => Promise<void>;
@@ -81,7 +82,7 @@ const ProjectForm: React.FC<IProps> = ({ callback, initialValues, submitText, re
       {({ values, setFieldValue }: FormikProps<ProjectInitialState>) => {
         const imageClicked = (image: Image, isAddImage: boolean): void => {
           if (isAddImage) {
-            setFieldValue('images', [Object.assign({}, image), ...values.images]);
+            setFieldValue('images', [ImageSerializer.toJson(image), ...values.images]);
           } else {
             setFieldValue(
               'images',

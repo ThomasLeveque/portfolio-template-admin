@@ -10,6 +10,7 @@ import { useNotif } from '../../../notification/notification.context';
 import ProjectForm from '../project.form';
 import { COLLECTION_NAME } from '../project.util';
 import { formatDistanceToNow } from 'date-fns';
+import ProjectSerializer from '../project.serializer';
 
 const ProjectPage = () => {
   const [project, setProject] = useState<Project | null>(null);
@@ -22,7 +23,7 @@ const ProjectPage = () => {
     const unsubscribe = firestore
       .doc(`${COLLECTION_NAME}/${projectId}`)
       .onSnapshot((doc: firebase.firestore.DocumentSnapshot) => {
-        setProject(new Project(doc));
+        setProject(ProjectSerializer.fromJson(doc));
       });
     return () => unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps

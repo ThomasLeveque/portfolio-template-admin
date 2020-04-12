@@ -8,9 +8,14 @@ import { CategoryInitialState } from '../category.initial-state';
 import LoadingComponent from '../../../components/loading/loading.component';
 import { toCapitalize } from '../../../utils/parse-string.util';
 import CategoryForm from '../category.form';
-import { COLLECTION_NAME, checkForExistingCategory } from '../category.util';
-import { Project } from '../../project/project.model';
+import {
+  COLLECTION_NAME,
+  checkForExistingCategory,
+  PARENT_COLLECTION_NAME,
+} from '../category.util';
 import { formatDistanceToNow } from 'date-fns';
+import ProjectSerializer from '../../project/project.serializer';
+import CategorySerializer from '../category.serializer';
 
 const CategoryPage = () => {
   const [category, setCategory] = useState<Category | null>(null);
@@ -23,7 +28,7 @@ const CategoryPage = () => {
     const unsubscribe = firestore
       .doc(`${COLLECTION_NAME}/${categoryId}`)
       .onSnapshot((doc: firebase.firestore.DocumentSnapshot) => {
-        setCategory(new Category(doc));
+        setCategory(CategorySerializer.fromJson(doc));
       });
     return () => unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -34,7 +39,9 @@ const CategoryPage = () => {
       const lowerName = await checkForExistingCategory(values.name);
 
       const batch = firestore.batch();
-      const projectsRef: firebase.firestore.CollectionReference = firestore.collection('projects');
+      const projectsRef: firebase.firestore.CollectionReference = firestore.collection(
+        PARENT_COLLECTION_NAME
+      );
       const categoryRef: firebase.firestore.DocumentReference = firestore
         .collection(COLLECTION_NAME)
         .doc(categoryId);
@@ -45,19 +52,20 @@ const CategoryPage = () => {
         name: lowerName,
       };
 
+      // Search in projects if the category to update exists inside categories array
       const projectsSnapshot: firebase.firestore.QuerySnapshot = await projectsRef
-        .where('categories', 'array-contains', category?.name)
+        .where(COLLECTION_NAME, 'array-contains', category?.name)
         .get();
       // It means the category deleted is not used
       if (!projectsSnapshot.empty) {
         for (const doc of projectsSnapshot.docs) {
           const projectRef = projectsRef.doc(doc.id);
-          const project = new Project(doc);
+          const project = ProjectSerializer.fromJson(doc);
           const newCategories = project.categories
             .join(',')
             .replace(`${category?.name}`, values.name)
             .split(',');
-          batch.update(projectRef, 'categories', newCategories);
+          batch.update(projectRef, COLLECTION_NAME, newCategories);
         }
       }
       batch.update(categoryRef, updatedCategory);

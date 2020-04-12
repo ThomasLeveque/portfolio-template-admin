@@ -13,7 +13,7 @@ const CategoriesPage = () => {
     categoriesLoading,
     removeCategoryLoading,
     removeCategory,
-    addCategory
+    addCategory,
   } = useCategory();
   const history = useHistory();
   const { pathname } = useLocation();
@@ -47,17 +47,18 @@ const CategoriesPage = () => {
           title="Action"
           dataIndex="action"
           fixed="right"
-          width={120}
+          width={140}
           render={(text: string, record: Category) => (
             <>
               <Button
                 icon={<EditOutlined />}
-                style={{ marginRight: '16px' }}
+                style={{ margin: '8px' }}
                 type="primary"
                 onClick={() => history.push(`${pathname}/${record.id}`)}
               />
               <Button
                 icon={<DeleteOutlined />}
+                style={{ margin: '8px' }}
                 type="danger"
                 onClick={() => removeCategory(record)}
               />

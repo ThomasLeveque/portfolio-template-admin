@@ -6,8 +6,9 @@ import { CategoryInitialState } from './category.initial-state';
 import { Category } from './category.model';
 import { formatError } from '../../utils/format-error.util';
 import { CategoryContext } from './category.context';
-import { COLLECTION_NAME, checkForExistingCategory } from './category.util';
-import { Project } from '../project/project.model';
+import { COLLECTION_NAME, checkForExistingCategory, PARENT_COLLECTION_NAME } from './category.util';
+import ProjectSerializer from '../project/project.serializer';
+import CategorySerializer from './category.serializer';
 
 const CategoryProvider: React.FC = memo(({ children }) => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -36,7 +37,9 @@ const CategoryProvider: React.FC = memo(({ children }) => {
     try {
       setRemoveCategoryLoading(true);
       const batch = firestore.batch();
-      const projectsRef: firebase.firestore.CollectionReference = firestore.collection('projects');
+      const projectsRef: firebase.firestore.CollectionReference = firestore.collection(
+        PARENT_COLLECTION_NAME
+      );
       const categoryRef: firebase.firestore.DocumentReference = firestore
         .collection(COLLECTION_NAME)
         .doc(id);
@@ -48,7 +51,7 @@ const CategoryProvider: React.FC = memo(({ children }) => {
       if (!snapshot.empty) {
         for (const doc of snapshot.docs) {
           const projectRef = projectsRef.doc(doc.id);
-          const project = new Project(doc);
+          const project = ProjectSerializer.fromJson(doc);
           const newCategories = project.categories.filter((category: string) => category !== name);
           batch.update(projectRef, COLLECTION_NAME, newCategories);
         }
@@ -65,9 +68,9 @@ const CategoryProvider: React.FC = memo(({ children }) => {
   };
 
   const handleSnapshot = (snapshot: firebase.firestore.QuerySnapshot) => {
-    const firestoreCategories = snapshot.docs.map((doc: firebase.firestore.DocumentSnapshot) => {
-      return new Category(doc);
-    });
+    const firestoreCategories = snapshot.docs.map((doc: firebase.firestore.DocumentSnapshot) =>
+      CategorySerializer.fromJson(doc)
+    );
     setCategoriesLoading(false);
     setCategories(firestoreCategories);
   };
