@@ -41,7 +41,7 @@ const ImagesPage = () => {
           xl: 4,
           xxl: 4,
         }}
-        dataSource={images}
+        dataSource={Object.keys(images).map((imageId: string) => images[imageId])}
         renderItem={(image: Image) => <CardImage image={image} />}
       />
     </LayoutComponent>

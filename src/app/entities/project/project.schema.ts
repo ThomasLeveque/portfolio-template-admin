@@ -1,6 +1,5 @@
 import * as yup from 'yup';
 
-import { Image } from '../../image/image.model';
 import { urlRegex } from '../../utils/regex.util';
 
 const max: number = 255;
@@ -25,7 +24,7 @@ const projectSchema = yup.object().shape({
   date: yup.string().required('Date required'),
   skills: yup.array<string>(),
   categories: yup.array<string>().required('At least one category required'),
-  images: yup.array<Image>(),
+  images: yup.array<string>(),
 });
 
 export default projectSchema;

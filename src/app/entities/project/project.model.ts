@@ -1,5 +1,3 @@
-import { Image } from '../../image/image.model';
-
 export class Project {
   id?: string;
   key?: string;
@@ -11,7 +9,7 @@ export class Project {
   formatedDate?: string;
   skills: string[];
   categories: string[];
-  images: Image[];
+  images: string[];
   createdAt: number;
   updatedAt: number;
 
@@ -21,8 +19,8 @@ export class Project {
     this.key = json.id;
     this.name = jsonData?.name;
     this.desc = jsonData?.desc;
-    this.projectUrl = jsonData?.projectUrl || '';
-    this.projectSrc = jsonData?.projectSrc || '';
+    this.projectUrl = jsonData?.projectUrl;
+    this.projectSrc = jsonData?.projectSrc;
     this.date = jsonData?.date;
     this.formatedDate = jsonData?.date;
     this.skills = jsonData?.skills || [];

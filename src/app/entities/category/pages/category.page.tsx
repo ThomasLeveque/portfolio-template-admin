@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, PageHeader, Descriptions } from 'antd';
 import { useHistory, useParams } from 'react-router-dom';
+
 import { useNotif } from '../../../notification/notification.context';
 import { Category } from '../category.model';
 import { firestore } from '../../../firebase/firebase.service';
@@ -8,13 +9,8 @@ import { CategoryInitialState } from '../category.initial-state';
 import LoadingComponent from '../../../components/loading/loading.component';
 import { toCapitalize } from '../../../utils/parse-string.util';
 import CategoryForm from '../category.form';
-import {
-  COLLECTION_NAME,
-  checkForExistingCategory,
-  PARENT_COLLECTION_NAME,
-} from '../category.util';
+import { COLLECTION_NAME, checkForExistingCategory } from '../category.util';
 import { formatDistanceToNow } from 'date-fns';
-import ProjectSerializer from '../../project/project.serializer';
 import CategorySerializer from '../category.serializer';
 
 const CategoryPage = () => {
@@ -34,42 +30,15 @@ const CategoryPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoryId]);
 
-  const updateCategory = async (values: CategoryInitialState): Promise<void> => {
+  const updateCategory = async ({ name }: CategoryInitialState): Promise<void> => {
     try {
-      const lowerName = await checkForExistingCategory(values.name);
+      const lowerName = await checkForExistingCategory(name);
 
-      const batch = firestore.batch();
-      const projectsRef: firebase.firestore.CollectionReference = firestore.collection(
-        PARENT_COLLECTION_NAME
-      );
       const categoryRef: firebase.firestore.DocumentReference = firestore
         .collection(COLLECTION_NAME)
         .doc(categoryId);
-      const updatedCategory: Category = {
-        ...values,
-        createdAt: category?.createdAt as number,
-        updatedAt: Date.now(),
-        name: lowerName,
-      };
+      await categoryRef.update({ updatedAt: Date.now(), name: lowerName });
 
-      // Search in projects if the category to update exists inside categories array
-      const projectsSnapshot: firebase.firestore.QuerySnapshot = await projectsRef
-        .where(COLLECTION_NAME, 'array-contains', category?.name)
-        .get();
-      // It means the category deleted is not used
-      if (!projectsSnapshot.empty) {
-        for (const doc of projectsSnapshot.docs) {
-          const projectRef = projectsRef.doc(doc.id);
-          const project = ProjectSerializer.fromJson(doc);
-          const newCategories = project.categories
-            .join(',')
-            .replace(`${category?.name}`, values.name)
-            .split(',');
-          batch.update(projectRef, COLLECTION_NAME, newCategories);
-        }
-      }
-      batch.update(categoryRef, updatedCategory);
-      await batch.commit();
       openMessage('Category updated successfully', 'success');
     } catch (err) {
       openNotification(err?.message, err?.code, 'error');

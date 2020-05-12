@@ -2,11 +2,13 @@ import React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { Typography, Table, Button, Tag } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { format, formatDistanceToNow } from 'date-fns';
+
 import { Project } from '../project.model';
 import ProjectForm from '../project.form';
 import { useProject } from '../project.context';
-import { format, formatDistanceToNow } from 'date-fns';
 import { getDomain } from '../../../utils/parse-string.util';
+import { useCategory } from '../../category/category.context';
 
 const ProjectsPage = () => {
   const {
@@ -16,6 +18,7 @@ const ProjectsPage = () => {
     addProject,
     removeProjectLoading,
   } = useProject();
+  const { categories } = useCategory();
   const history = useHistory();
   const { pathname } = useLocation();
   const { Title } = Typography;
@@ -85,16 +88,16 @@ const ProjectsPage = () => {
           title="Categories"
           dataIndex="categories"
           width={250}
-          render={(categories: string[]) => (
+          render={(categoryIds: string[]) => (
             <span>
-              {categories.map((category: string) => {
+              {categoryIds.map((categoryId: string) => {
                 return (
                   <Tag
                     style={{ marginTop: '3px', marginBottom: '3px' }}
                     color="geekblue"
-                    key={category}
+                    key={categoryId}
                   >
-                    {category.toUpperCase()}
+                    {categories[categoryId].name.toUpperCase()}
                   </Tag>
                 );
               })}

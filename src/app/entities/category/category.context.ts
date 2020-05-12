@@ -1,22 +1,22 @@
 import { createContext, useContext } from 'react';
 
-import { Category } from './category.model';
 import { CategoryInitialState } from './category.initial-state';
+import { CategoryMapping } from './category.interface';
 
 interface ICategoryContext {
-  categories: Category[];
+  categories: CategoryMapping;
   removeCategoryLoading: boolean;
   categoriesLoading: boolean;
   addCategory: (values: CategoryInitialState) => Promise<void>;
-  removeCategory: (category: Category) => Promise<void>;
+  removeCategory: (categoryIdToRemove: string) => Promise<void>;
 }
 
 export const CategoryContext = createContext<ICategoryContext>({
-  categories: [],
+  categories: {},
   removeCategoryLoading: false,
   categoriesLoading: false,
   addCategory: async () => {},
-  removeCategory: async () => {}
+  removeCategory: async () => {},
 });
 
 export const useCategory = () => useContext(CategoryContext);
