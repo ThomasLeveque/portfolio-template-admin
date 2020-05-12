@@ -1,26 +1,25 @@
 import React, { useEffect, memo, useState } from 'react';
 
 import { useNotif } from '../../notification/notification.context';
-import { firestore } from '../../firebase/firebase.service';
+import { firestore, FieldValue } from '../../firebase/firebase.service';
 import { CategoryInitialState } from './category.initial-state';
 import { Category } from './category.model';
 import { formatError } from '../../utils/format-error.util';
 import { CategoryContext } from './category.context';
 import { COLLECTION_NAME, checkForExistingCategory, PARENT_COLLECTION_NAME } from './category.util';
-import ProjectSerializer from '../project/project.serializer';
 import CategorySerializer from './category.serializer';
+import { CategoryMapping } from './category.interface';
 
 const CategoryProvider: React.FC = memo(({ children }) => {
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<CategoryMapping>({});
   const [removeCategoryLoading, setRemoveCategoryLoading] = useState<boolean>(false);
   const [categoriesLoading, setCategoriesLoading] = useState<boolean>(false);
   const { openNotification, openMessage } = useNotif();
 
-  const addCategory = async (values: CategoryInitialState): Promise<void> => {
+  const addCategory = async ({ name }: CategoryInitialState): Promise<void> => {
     try {
-      const lowerName = await checkForExistingCategory(values.name);
+      const lowerName = await checkForExistingCategory(name);
       const newCategory: Category = {
-        ...values,
         createdAt: Date.now(),
         updatedAt: Date.now(),
         name: lowerName,
@@ -33,7 +32,7 @@ const CategoryProvider: React.FC = memo(({ children }) => {
     }
   };
 
-  const removeCategory = async ({ id, name }: Category): Promise<void> => {
+  const removeCategory = async (categoryIdToRemove: string): Promise<void> => {
     try {
       setRemoveCategoryLoading(true);
       const batch = firestore.batch();
@@ -42,17 +41,16 @@ const CategoryProvider: React.FC = memo(({ children }) => {
       );
       const categoryRef: firebase.firestore.DocumentReference = firestore
         .collection(COLLECTION_NAME)
-        .doc(id);
+        .doc(categoryIdToRemove);
 
-      const snapshot: firebase.firestore.QuerySnapshot = await projectsRef
-        .where(COLLECTION_NAME, 'array-contains', name)
+      const projectsWithCategoryToRemove: firebase.firestore.QuerySnapshot = await projectsRef
+        .where(COLLECTION_NAME, 'array-contains', categoryIdToRemove)
         .get();
-      // It means the category deleted is not used
-      if (!snapshot.empty) {
-        for (const doc of snapshot.docs) {
+      // Category deleted is used
+      if (!projectsWithCategoryToRemove.empty) {
+        for (const doc of projectsWithCategoryToRemove.docs) {
           const projectRef = projectsRef.doc(doc.id);
-          const project = ProjectSerializer.fromJson(doc);
-          const newCategories = project.categories.filter((category: string) => category !== name);
+          const newCategories = FieldValue.arrayRemove(categoryIdToRemove);
           batch.update(projectRef, COLLECTION_NAME, newCategories);
         }
       }
@@ -67,12 +65,14 @@ const CategoryProvider: React.FC = memo(({ children }) => {
     }
   };
 
-  const handleSnapshot = (snapshot: firebase.firestore.QuerySnapshot) => {
-    const firestoreCategories = snapshot.docs.map((doc: firebase.firestore.DocumentSnapshot) =>
-      CategorySerializer.fromJson(doc)
+  const handleSnapshot = ({ docs }: firebase.firestore.QuerySnapshot) => {
+    const categories: CategoryMapping = {};
+    docs.map(
+      (doc: firebase.firestore.DocumentSnapshot) =>
+        (categories[doc.id] = CategorySerializer.fromJson(doc))
     );
     setCategoriesLoading(false);
-    setCategories(firestoreCategories);
+    setCategories(categories);
   };
 
   const handleError = (err: any) => {

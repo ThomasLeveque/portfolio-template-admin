@@ -1,17 +1,17 @@
 import React, { useEffect, memo, useState } from 'react';
+import { RcFile } from 'antd/lib/upload/interface';
 
 import { ImageContext } from './image.context';
-import { useNotif } from '../notification/notification.context';
+import { useNotif } from '../../notification/notification.context';
 import { Image } from './image.model';
-import { formatError } from '../utils/format-error.util';
-import { firestore, storage } from '../firebase/firebase.service';
+import { formatError } from '../../utils/format-error.util';
+import { firestore, storage, FieldValue } from '../../firebase/firebase.service';
 import { COLLECTION_NAME, PARENT_COLLECTION_NAME } from './image.util';
-import { RcFile } from 'antd/lib/upload/interface';
-import ProjectSerializer from '../entities/project/project.serializer';
 import ImageSerializer from './image.serializer';
+import { ImageMapping } from './image.interface';
 
 const ImageProvider: React.FC = memo(({ children }) => {
-  const [images, setImages] = useState<Image[]>([]);
+  const [images, setImages] = useState<ImageMapping>({});
   const [removeImageLoading, setRemoveImageLoading] = useState<boolean>(false);
   const [imagesLoading, setImagesLoading] = useState<boolean>(false);
   const [addImageLoading, setAddImageLoading] = useState<boolean>(false);
@@ -44,15 +44,14 @@ const ImageProvider: React.FC = memo(({ children }) => {
         .collection(COLLECTION_NAME)
         .doc(id);
 
-      const snapshot: firebase.firestore.QuerySnapshot = await projectsRef
-        .where(COLLECTION_NAME, 'array-contains', ImageSerializer.toJson(image))
+      const projectsWithImageToRemove: firebase.firestore.QuerySnapshot = await projectsRef
+        .where(COLLECTION_NAME, 'array-contains', id)
         .get();
       // It means the category deleted is not used
-      if (!snapshot.empty) {
-        for (const doc of snapshot.docs) {
+      if (!projectsWithImageToRemove.empty) {
+        for (const doc of projectsWithImageToRemove.docs) {
           const projectRef = projectsRef.doc(doc.id);
-          const project = ProjectSerializer.fromJson(doc);
-          const newImages = project.images.filter((image: Image) => image.id !== id);
+          const newImages = FieldValue.arrayRemove(id);
           batch.update(projectRef, COLLECTION_NAME, newImages);
         }
       }
@@ -69,7 +68,7 @@ const ImageProvider: React.FC = memo(({ children }) => {
     }
   };
 
-  const uploadImage = async (file: RcFile): Promise<Image | undefined> => {
+  const uploadImage = async (file: RcFile): Promise<string | undefined> => {
     try {
       const fileSize: number = file.size / 1024 / 1024;
       const fileType: string = file.type.replace('image/', '');
@@ -108,12 +107,9 @@ const ImageProvider: React.FC = memo(({ children }) => {
         fileSize,
         createdAt: Date.now(),
       };
-      const projectId = await addImage(newImage);
+      const imageId = await addImage(newImage);
       setAddImageLoading(false);
-      return {
-        id: projectId,
-        ...newImage,
-      };
+      return imageId;
     } catch (err) {
       openNotification(err?.message, err?.code, 'error');
       console.error(err);
@@ -122,11 +118,12 @@ const ImageProvider: React.FC = memo(({ children }) => {
   };
 
   const handleSnapshot = (snapshot: firebase.firestore.QuerySnapshot): void => {
-    const firestoreCategories: Image[] = snapshot.docs.map(
-      (doc: firebase.firestore.DocumentSnapshot) => ImageSerializer.fromJson(doc)
+    const images: ImageMapping = {};
+    snapshot.docs.map(
+      (doc: firebase.firestore.DocumentSnapshot) => (images[doc.id] = ImageSerializer.fromJson(doc))
     );
     setImagesLoading(false);
-    setImages(firestoreCategories);
+    setImages(images);
   };
 
   const handleError = (err: any): void => {

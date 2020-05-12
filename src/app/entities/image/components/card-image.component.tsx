@@ -16,9 +16,9 @@ import './card-image.styles.less';
 
 interface IProps {
   image: Image;
-  selectedImages?: Image[];
+  selectedImages?: string[];
   isClickableImage?: boolean;
-  imageClicked?: (image: Image, isAddImage: boolean) => void;
+  imageClicked?: (imageId: string, isAddImage: boolean) => void;
   size?: CardSize;
 }
 
@@ -33,8 +33,9 @@ const CardImage: React.FC<IProps> = ({
   const { Text } = Typography;
 
   const isSelectedImage: boolean = !!selectedImages.find(
-    (selectedImage: Image) => selectedImage.id === image.id
+    (selectedImageId: string) => selectedImageId === image.id
   );
+  const imageId = image.id as string;
 
   let actions: ReactElement[] = [];
   if (!isClickableImage) {
@@ -43,12 +44,12 @@ const CardImage: React.FC<IProps> = ({
     if (isSelectedImage) {
       actions = [
         <MinusSquareTwoTone
-          onClick={() => imageClicked(image, !isSelectedImage)}
+          onClick={() => imageClicked(imageId, !isSelectedImage)}
           twoToneColor="#ff7875"
         />,
       ];
     } else {
-      actions = [<PlusSquareTwoTone onClick={() => imageClicked(image, !isSelectedImage)} />];
+      actions = [<PlusSquareTwoTone onClick={() => imageClicked(imageId, !isSelectedImage)} />];
     }
   }
 

@@ -1,17 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Formik, FormikHelpers, FormikProps } from 'formik';
-import { ProjectInitialState } from './project.initial-state';
-import projectSchema from './project.schema';
 import { Form, Input, ResetButton, SubmitButton, DatePicker, Select } from 'formik-antd';
 import { Input as AntdInput, Button as AntdButton, Tag, Modal, List, Upload } from 'antd';
+
+import { ProjectInitialState } from './project.initial-state';
+import projectSchema from './project.schema';
 import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import { useCategory } from '../category/category.context';
-import { Category } from '../category/category.model';
-import { useImage } from '../../image/image.context';
-import { Image } from '../../image/image.model';
-import CardImage from '../../image/components/card-image.component';
+import { useImage } from '../image/image.context';
+import { Image } from '../image/image.model';
+import CardImage from '../image/components/card-image.component';
 import { RcFile } from 'antd/lib/upload/interface';
-import ImageSerializer from '../../image/image.serializer';
 
 interface IProps {
   callback: (values: ProjectInitialState) => Promise<void>;
@@ -80,21 +79,21 @@ const ProjectForm: React.FC<IProps> = ({ callback, initialValues, submitText, re
       enableReinitialize
     >
       {({ values, setFieldValue }: FormikProps<ProjectInitialState>) => {
-        const imageClicked = (image: Image, isAddImage: boolean): void => {
+        const imageClicked = (imageId: string, isAddImage: boolean): void => {
           if (isAddImage) {
-            setFieldValue('images', [ImageSerializer.toJson(image), ...values.images]);
+            setFieldValue('images', [imageId, ...values.images]);
           } else {
             setFieldValue(
               'images',
-              values.images.filter((valuesImage: Image) => valuesImage.id !== image.id)
+              values.images.filter((valuesImageId: string) => valuesImageId !== imageId)
             );
           }
         };
 
         const uploadImageAndAddToProject = async (file: RcFile) => {
-          const image = await uploadImage(file);
-          if (!image) return;
-          setFieldValue('images', [image, ...values.images]);
+          const imageId = await uploadImage(file);
+          if (!imageId) return;
+          setFieldValue('images', [imageId, ...values.images]);
         };
 
         const imagesSize: number = values.images.length;
@@ -151,9 +150,9 @@ const ProjectForm: React.FC<IProps> = ({ callback, initialValues, submitText, re
               </Form.Item>
               <Form.Item name="categories" required label="Categories">
                 <Select mode="multiple" placeholder="Select categories" name="categories">
-                  {categories.map((category: Category) => (
-                    <Option key={category.id} value={category.name}>
-                      {category.name}
+                  {Object.keys(categories).map((categoryId: string) => (
+                    <Option key={categoryId} value={categoryId}>
+                      {categories[categoryId].name}
                     </Option>
                   ))}
                 </Select>
@@ -191,7 +190,7 @@ const ProjectForm: React.FC<IProps> = ({ callback, initialValues, submitText, re
                         xl: 4,
                         xxl: 6,
                       }}
-                      dataSource={values.images}
+                      dataSource={values.images.map((imageId: string) => images[imageId])}
                       renderItem={(image: Image) => (
                         <CardImage
                           size="small"
@@ -236,7 +235,7 @@ const ProjectForm: React.FC<IProps> = ({ callback, initialValues, submitText, re
                   xl: 4,
                   xxl: 6,
                 }}
-                dataSource={images}
+                dataSource={Object.keys(images).map((imageId: string) => images[imageId])}
                 renderItem={(image: Image) => (
                   <CardImage
                     imageClicked={imageClicked}

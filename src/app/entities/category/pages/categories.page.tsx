@@ -24,7 +24,7 @@ const CategoriesPage = () => {
       <Title level={1}>My Categories</Title>
       <Table<Category>
         loading={categoriesLoading || removeCategoryLoading}
-        dataSource={categories}
+        dataSource={Object.keys(categories).map((categoryId: string) => categories[categoryId])}
         scroll={{ x: true }}
       >
         <Table.Column<Category> key="name" title="Name" dataIndex="name" />
@@ -48,19 +48,19 @@ const CategoriesPage = () => {
           dataIndex="action"
           fixed="right"
           width={140}
-          render={(text: string, record: Category) => (
+          render={(text: string, { id }: Category) => (
             <>
               <Button
                 icon={<EditOutlined />}
                 style={{ margin: '8px' }}
                 type="primary"
-                onClick={() => history.push(`${pathname}/${record.id}`)}
+                onClick={() => history.push(`${pathname}/${id}`)}
               />
               <Button
                 icon={<DeleteOutlined />}
                 style={{ margin: '8px' }}
                 type="danger"
-                onClick={() => removeCategory(record)}
+                onClick={() => removeCategory(id as string)}
               />
             </>
           )}
