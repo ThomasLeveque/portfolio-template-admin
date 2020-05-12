@@ -2,10 +2,10 @@ import React, { useEffect, memo, useState } from 'react';
 import { RcFile } from 'antd/lib/upload/interface';
 
 import { ImageContext } from './image.context';
-import { useNotif } from '../notification/notification.context';
+import { useNotif } from '../../notification/notification.context';
 import { Image } from './image.model';
-import { formatError } from '../utils/format-error.util';
-import { firestore, storage, FieldValue } from '../firebase/firebase.service';
+import { formatError } from '../../utils/format-error.util';
+import { firestore, storage, FieldValue } from '../../firebase/firebase.service';
 import { COLLECTION_NAME, PARENT_COLLECTION_NAME } from './image.util';
 import ImageSerializer from './image.serializer';
 import { ImageMapping } from './image.interface';

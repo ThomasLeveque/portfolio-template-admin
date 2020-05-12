@@ -4,7 +4,6 @@ import { RocketOutlined, LoadingOutlined } from '@ant-design/icons';
 import { RcFile } from 'antd/lib/upload';
 
 import { Image } from '../image.model';
-import LayoutComponent from '../../components/layout/layout.component';
 import { useImage } from '../image.context';
 import CardImage from '../components/card-image.component';
 
@@ -16,7 +15,7 @@ const ImagesPage = () => {
   const { Title } = Typography;
 
   return (
-    <LayoutComponent pageClassName="images page">
+    <div className="images page">
       <Dragger
         name="images"
         multiple
@@ -44,7 +43,7 @@ const ImagesPage = () => {
         dataSource={Object.keys(images).map((imageId: string) => images[imageId])}
         renderItem={(image: Image) => <CardImage image={image} />}
       />
-    </LayoutComponent>
+    </div>
   );
 };
 

@@ -7,9 +7,9 @@ import { ProjectInitialState } from './project.initial-state';
 import projectSchema from './project.schema';
 import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import { useCategory } from '../category/category.context';
-import { useImage } from '../../image/image.context';
-import { Image } from '../../image/image.model';
-import CardImage from '../../image/components/card-image.component';
+import { useImage } from '../image/image.context';
+import { Image } from '../image/image.model';
+import CardImage from '../image/components/card-image.component';
 import { RcFile } from 'antd/lib/upload/interface';
 
 interface IProps {
