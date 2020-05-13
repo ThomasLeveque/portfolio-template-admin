@@ -1,1 +1,2 @@
-export { getProjects, getProject, getCategories, getCategory } from "./http";
+export { getProjects, getProject } from './entities/project/project.functions';
+export { getCategories, getCategory } from './entities/category/category.functions';
