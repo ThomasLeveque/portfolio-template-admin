@@ -23,7 +23,7 @@ const projectSchema = yup.object().shape({
     .matches(urlRegex, 'Not an url'),
   date: yup.string().required('Date required'),
   skills: yup.array<string>(),
-  categories: yup.array<string>().required('At least one category required'),
+  categories: yup.array<string>(),
   images: yup.array<string>(),
 });
 

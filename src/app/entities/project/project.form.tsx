@@ -148,7 +148,7 @@ const ProjectForm: React.FC<IProps> = ({ callback, initialValues, submitText, re
                   )}
                 </>
               </Form.Item>
-              <Form.Item name="categories" required label="Categories">
+              <Form.Item name="categories" label="Categories">
                 <Select mode="multiple" placeholder="Select categories" name="categories">
                   {Object.keys(categories).map((categoryId: string) => (
                     <Option key={categoryId} value={categoryId}>

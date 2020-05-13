@@ -105,6 +105,18 @@ const ProjectsPage = () => {
           )}
         />
         <Table.Column<Project>
+          key="images"
+          title="Images"
+          dataIndex="images"
+          width={200}
+          render={(imageIds: string[]) => (
+            <span>
+              {imageIds.length > 0 ? imageIds.length : 'No'}{' '}
+              {imageIds.length === 1 ? 'image' : 'images'}
+            </span>
+          )}
+        />
+        <Table.Column<Project>
           key="createdAt"
           title="Created about"
           dataIndex="createdAt"
