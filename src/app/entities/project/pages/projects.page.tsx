@@ -56,9 +56,9 @@ const ProjectsPage = () => {
           )}
         />
         <Table.Column<Project>
-          key="formatedDate"
+          key="date"
           title="Project date"
-          dataIndex="formatedDate"
+          dataIndex="date"
           width={140}
           render={(date: string) => format(new Date(date), 'MMMM yyyy')}
         />
